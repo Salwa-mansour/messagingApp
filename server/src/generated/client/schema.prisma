@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    String   @default("hi there i am using messaging app")
+
+  // 1. MESSAGES RELATIONSHIP
+  messages Message[]
+
+  // 2. GROUPS RELATIONSHIP (Implicit Many-to-Many)
+  // Connects users directly to groups without an extra object
+  groups Group[]
+
+  // 3. CONTACTS RELATIONSHIP (Self-Referencing Many-to-Many)
+  // Allows a user to add other Users as contacts
+  contacts  User[] @relation("UserContacts")
+  contactOf User[] @relation("UserContacts")
+}
+
+model Group {
+  id        String   @id @default(uuid())
+  name      String // e.g., "General Chat" or "Group Alpha"
+  isDefault Boolean  @default(false) // Set to 'true' for the all-user group
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  users    User[] // Members of this group
+  messages Message[] // Messages sent in this group
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  // Relations
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
