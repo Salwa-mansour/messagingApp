@@ -1163,6 +1163,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     status: string | null
+    refreshToken: string | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -1173,6 +1174,7 @@ export namespace Prisma {
     createdAt: Date | null
     updatedAt: Date | null
     status: string | null
+    refreshToken: string | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -1183,6 +1185,7 @@ export namespace Prisma {
     createdAt: number
     updatedAt: number
     status: number
+    refreshToken: number
     _all: number
   }
 
@@ -1195,6 +1198,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     status?: true
+    refreshToken?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -1205,6 +1209,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     status?: true
+    refreshToken?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -1215,6 +1220,7 @@ export namespace Prisma {
     createdAt?: true
     updatedAt?: true
     status?: true
+    refreshToken?: true
     _all?: true
   }
 
@@ -1298,6 +1304,7 @@ export namespace Prisma {
     createdAt: Date
     updatedAt: Date
     status: string
+    refreshToken: string | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -1325,6 +1332,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     status?: boolean
+    refreshToken?: boolean
     messages?: boolean | User$messagesArgs<ExtArgs>
     groups?: boolean | User$groupsArgs<ExtArgs>
     contacts?: boolean | User$contactsArgs<ExtArgs>
@@ -1340,6 +1348,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     status?: boolean
+    refreshToken?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -1350,6 +1359,7 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     status?: boolean
+    refreshToken?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -1360,9 +1370,10 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     status?: boolean
+    refreshToken?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "createdAt" | "updatedAt" | "status", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "password" | "createdAt" | "updatedAt" | "status" | "refreshToken", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     messages?: boolean | User$messagesArgs<ExtArgs>
     groups?: boolean | User$groupsArgs<ExtArgs>
@@ -1389,6 +1400,7 @@ export namespace Prisma {
       createdAt: Date
       updatedAt: Date
       status: string
+      refreshToken: string | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -1823,6 +1835,7 @@ export namespace Prisma {
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
     readonly status: FieldRef<"User", 'String'>
+    readonly refreshToken: FieldRef<"User", 'String'>
   }
     
 
@@ -4525,7 +4538,8 @@ export namespace Prisma {
     password: 'password',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    status: 'status'
+    status: 'status',
+    refreshToken: 'refreshToken'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -4567,6 +4581,14 @@ export namespace Prisma {
   };
 
   export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+  export const NullsOrder: {
+    first: 'first',
+    last: 'last'
+  };
+
+  export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
   /**
@@ -4637,6 +4659,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     status?: StringFilter<"User"> | string
+    refreshToken?: StringNullableFilter<"User"> | string | null
     messages?: MessageListRelationFilter
     groups?: GroupListRelationFilter
     contacts?: UserListRelationFilter
@@ -4651,6 +4674,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     status?: SortOrder
+    refreshToken?: SortOrderInput | SortOrder
     messages?: MessageOrderByRelationAggregateInput
     groups?: GroupOrderByRelationAggregateInput
     contacts?: UserOrderByRelationAggregateInput
@@ -4668,6 +4692,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     status?: StringFilter<"User"> | string
+    refreshToken?: StringNullableFilter<"User"> | string | null
     messages?: MessageListRelationFilter
     groups?: GroupListRelationFilter
     contacts?: UserListRelationFilter
@@ -4682,6 +4707,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     status?: SortOrder
+    refreshToken?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -4698,6 +4724,7 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     status?: StringWithAggregatesFilter<"User"> | string
+    refreshToken?: StringNullableWithAggregatesFilter<"User"> | string | null
   }
 
   export type GroupWhereInput = {
@@ -4824,6 +4851,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutUsersInput
     contacts?: UserCreateNestedManyWithoutContactOfInput
@@ -4838,6 +4866,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutUsersInput
     contacts?: UserUncheckedCreateNestedManyWithoutContactOfInput
@@ -4852,6 +4881,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutUsersNestedInput
     contacts?: UserUpdateManyWithoutContactOfNestedInput
@@ -4866,6 +4896,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutUsersNestedInput
     contacts?: UserUncheckedUpdateManyWithoutContactOfNestedInput
@@ -4880,6 +4911,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -4890,6 +4922,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -4900,6 +4933,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type GroupCreateInput = {
@@ -5046,6 +5080,21 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type StringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type MessageListRelationFilter = {
     every?: MessageWhereInput
     some?: MessageWhereInput
@@ -5062,6 +5111,11 @@ export namespace Prisma {
     every?: UserWhereInput
     some?: UserWhereInput
     none?: UserWhereInput
+  }
+
+  export type SortOrderInput = {
+    sort: SortOrder
+    nulls?: NullsOrder
   }
 
   export type MessageOrderByRelationAggregateInput = {
@@ -5084,6 +5138,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     status?: SortOrder
+    refreshToken?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -5094,6 +5149,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     status?: SortOrder
+    refreshToken?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -5104,6 +5160,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     status?: SortOrder
+    refreshToken?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -5136,6 +5193,24 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    mode?: QueryMode
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -5265,6 +5340,10 @@ export namespace Prisma {
 
   export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string
+  }
+
+  export type NullableStringFieldUpdateOperationsInput = {
+    set?: string | null
   }
 
   export type MessageUpdateManyWithoutSenderNestedInput = {
@@ -5510,6 +5589,20 @@ export namespace Prisma {
     not?: NestedDateTimeFilter<$PrismaModel> | Date | string
   }
 
+  export type NestedStringNullableFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
   export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -5550,6 +5643,34 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedDateTimeFilter<$PrismaModel>
     _max?: NestedDateTimeFilter<$PrismaModel>
+  }
+
+  export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: string | StringFieldRefInput<$PrismaModel> | null
+    in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    notIn?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    lt?: string | StringFieldRefInput<$PrismaModel>
+    lte?: string | StringFieldRefInput<$PrismaModel>
+    gt?: string | StringFieldRefInput<$PrismaModel>
+    gte?: string | StringFieldRefInput<$PrismaModel>
+    contains?: string | StringFieldRefInput<$PrismaModel>
+    startsWith?: string | StringFieldRefInput<$PrismaModel>
+    endsWith?: string | StringFieldRefInput<$PrismaModel>
+    not?: NestedStringNullableWithAggregatesFilter<$PrismaModel> | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedStringNullableFilter<$PrismaModel>
+    _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type NestedIntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -5620,6 +5741,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutUsersInput
     contacts?: UserCreateNestedManyWithoutContactOfInput
@@ -5633,6 +5755,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutUsersInput
     contacts?: UserUncheckedCreateNestedManyWithoutContactOfInput
@@ -5651,6 +5774,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageCreateNestedManyWithoutSenderInput
     groups?: GroupCreateNestedManyWithoutUsersInput
     contactOf?: UserCreateNestedManyWithoutContactsInput
@@ -5664,6 +5788,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     groups?: GroupUncheckedCreateNestedManyWithoutUsersInput
     contactOf?: UserUncheckedCreateNestedManyWithoutContactsInput
@@ -5755,6 +5880,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     status?: StringFilter<"User"> | string
+    refreshToken?: StringNullableFilter<"User"> | string | null
   }
 
   export type UserUpsertWithWhereUniqueWithoutContactsInput = {
@@ -5781,6 +5907,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageCreateNestedManyWithoutSenderInput
     contacts?: UserCreateNestedManyWithoutContactOfInput
     contactOf?: UserCreateNestedManyWithoutContactsInput
@@ -5794,6 +5921,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     messages?: MessageUncheckedCreateNestedManyWithoutSenderInput
     contacts?: UserUncheckedCreateNestedManyWithoutContactOfInput
     contactOf?: UserUncheckedCreateNestedManyWithoutContactsInput
@@ -5868,6 +5996,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     groups?: GroupCreateNestedManyWithoutUsersInput
     contacts?: UserCreateNestedManyWithoutContactOfInput
     contactOf?: UserCreateNestedManyWithoutContactsInput
@@ -5881,6 +6010,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     status?: string
+    refreshToken?: string | null
     groups?: GroupUncheckedCreateNestedManyWithoutUsersInput
     contacts?: UserUncheckedCreateNestedManyWithoutContactOfInput
     contactOf?: UserUncheckedCreateNestedManyWithoutContactsInput
@@ -5933,6 +6063,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     groups?: GroupUpdateManyWithoutUsersNestedInput
     contacts?: UserUpdateManyWithoutContactOfNestedInput
     contactOf?: UserUpdateManyWithoutContactsNestedInput
@@ -5946,6 +6077,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     groups?: GroupUncheckedUpdateManyWithoutUsersNestedInput
     contacts?: UserUncheckedUpdateManyWithoutContactOfNestedInput
     contactOf?: UserUncheckedUpdateManyWithoutContactsNestedInput
@@ -6042,6 +6174,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutUsersNestedInput
     contacts?: UserUpdateManyWithoutContactOfNestedInput
@@ -6055,6 +6188,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutUsersNestedInput
     contacts?: UserUncheckedUpdateManyWithoutContactOfNestedInput
@@ -6068,6 +6202,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type UserUpdateWithoutContactsInput = {
@@ -6078,6 +6213,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUpdateManyWithoutSenderNestedInput
     groups?: GroupUpdateManyWithoutUsersNestedInput
     contactOf?: UserUpdateManyWithoutContactsNestedInput
@@ -6091,6 +6227,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     groups?: GroupUncheckedUpdateManyWithoutUsersNestedInput
     contactOf?: UserUncheckedUpdateManyWithoutContactsNestedInput
@@ -6104,6 +6241,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageCreateManyGroupInput = {
@@ -6121,6 +6259,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUpdateManyWithoutSenderNestedInput
     contacts?: UserUpdateManyWithoutContactOfNestedInput
     contactOf?: UserUpdateManyWithoutContactsNestedInput
@@ -6134,6 +6273,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
     messages?: MessageUncheckedUpdateManyWithoutSenderNestedInput
     contacts?: UserUncheckedUpdateManyWithoutContactOfNestedInput
     contactOf?: UserUncheckedUpdateManyWithoutContactsNestedInput
@@ -6147,6 +6287,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
+    refreshToken?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUpdateWithoutGroupInput = {

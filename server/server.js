@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
+import authRouter from './routes/authRouter.js';
 
 const app = express();
 
@@ -10,6 +11,7 @@ app.use(cors()); // Connects to your React local server
 app.use(express.json());
 app.use(cookieParser());
 
+app.use('/api', authRouter);
 // Simple Test Route
 app.get('/api/test', (req, res) => {
   res.json({ message: "Hello from the JavaScript Express backend!" });
@@ -21,7 +23,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong on the server!' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running with nodemon on port ${PORT}`);
 });

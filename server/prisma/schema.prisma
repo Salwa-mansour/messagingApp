@@ -20,6 +20,8 @@ model User {
   updatedAt DateTime @updatedAt
   status    String   @default("hi there i am using messaging app") 
 
+  refreshToken String?   @db.Text
+
   // 1. MESSAGES RELATIONSHIP
   messages  Message[]
 
