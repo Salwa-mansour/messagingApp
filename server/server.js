@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import authRouter from './routes/authRouter.js';
+import messageRoutes from './routes/messageRouter.js';
 
 const app = express();
 
@@ -12,10 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', authRouter);
-// Simple Test Route
-app.get('/api/test', (req, res) => {
-  res.json({ message: "Hello from the JavaScript Express backend!" });
-});
+app.use('/api/message', messageRoutes);;
 
 // Global Error Handler
 app.use((err, req, res, next) => {
