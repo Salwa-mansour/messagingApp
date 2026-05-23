@@ -5,10 +5,28 @@ import 'dotenv/config';
 import authRouter from './routes/authRouter.js';
 import messageRoutes from './routes/messageRouter.js';
 
+
 const app = express();
 
 // Middleware
-app.use(cors()); // Connects to your React local server
+const allowedOrigins = ['http://localhost:5173'];
+
+const corsOptions = {
+    origin: (origin, callback) => {
+        // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true, // Crucial for handling cookies/refresh tokens
+    optionsSuccessStatus: 200
+};
+
+// 2. Apply the middleware BEFORE your route handlers
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(cookieParser());
 

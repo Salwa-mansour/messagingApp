@@ -55,7 +55,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const registerUser = async (req, res) => {
-  // 1. Destructure confirmPassword out of the incoming request body
+ console.log('Received registration data:', req.body); // Debug log to see incoming data
   const { username, email, password, confirmPassword } = req.body;
 
   // 2. Add it to your initial empty field check
