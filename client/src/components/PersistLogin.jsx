@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { useState, useEffect } from "react";
-import useRefreshToken from "../hooks/useRefreshToken"; // Your custom hook that hits /api/refresh
+import useRefreshToken from "../hooks/useRefreshToken"; 
 import { useAuth } from "../hooks/useAuth";
 import useToggle from "../hooks/useToggle";
 
@@ -15,17 +15,16 @@ const PersistLogin = () => {
 
     const verifyRefreshToken = async () => {
       try {
-        // Hit your /api/refresh endpoint to get a fresh access token
         await refresh();
       } catch (err) {
-        // Log gently — 401 is expected if they don't have a cookie yet
         console.log("No valid refresh session found (User is a guest).");
       } finally {
         if (isMounted) setIsLoading(false);
       }
     };
 
-    // Only run verification if we have no access token in memory BUT persist is enabled
+    // This runs on mount. If there's already a token in memory, skip.
+    // If there's no token but persist is true, try to refresh.
     if (!auth?.token && persist) {
       verifyRefreshToken();
     } else {
@@ -35,9 +34,12 @@ const PersistLogin = () => {
     return () => {
       isMounted = false;
     };
-  }, [auth?.token, persist, refresh]);
+    
+  // 3. FIX: Remove auth?.token from here! 
+  // We only pass 'persist' and 'refresh'. Since 'refresh' is a stable hook function,
+  // this effect will now only run once when the user first visits the page.
+  }, [persist, refresh]); 
 
-  // Show a clean loading state while the background check finishes to avoid UI flashing
   return !persist ? <Outlet /> : isLoading ? <p>Loading session...</p> : <Outlet />;
 };
 

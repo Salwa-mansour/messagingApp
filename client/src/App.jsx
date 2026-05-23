@@ -3,14 +3,8 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ChatDashboard from "./components/chatBoard";
 
-// Mock placeholder component for your core application workspace
-const ChatDashboard = () => (
-  <div style={{ padding: "20px" }}>
-    <h2>Chat Dashboard Workspace</h2>
-    <p>Welcome! You successfully authenticated.</p>
-  </div>
-);
 
 function App() {
   return (

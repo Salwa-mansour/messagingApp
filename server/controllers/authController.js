@@ -55,7 +55,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const registerUser = async (req, res) => {
- console.log('Received registration data:', req.body); // Debug log to see incoming data
+
   const { username, email, password, confirmPassword } = req.body;
 
   // 2. Add it to your initial empty field check
@@ -93,7 +93,7 @@ export const registerUser = async (req, res) => {
     );
     // ─── IMMEDIATE LOGIN SIGNING SYSTEM ──────────────────────────
     
-    const { accessToken, refreshToken } = generateTokens(user);
+    const { accessToken, refreshToken } = generateTokens(newUser);
 
     // 8. Save the refresh token string into the database
     await userService.updateUserRefreshToken(newUser.id, refreshToken);
@@ -182,6 +182,7 @@ export const refreshToken = async (req, res) => {
 
 export const logoutUser = async (req, res) => {
   // 1. Grab the refresh token from cookies
+  console.log('Logout Request Cookies:', req.cookies); // Debugging line to check incoming cookies
   const cookies = req.cookies;
   if (!cookies?.refreshToken) {
     // If there's no cookie anyway, they are already logged out on the client side

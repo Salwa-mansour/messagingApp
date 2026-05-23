@@ -143,7 +143,7 @@ const Register = () => {
           <section className="auth-success-view">
             <h2 className="auth-title">Success!</h2>
             <div className="success-box" role="status">
-              Account created. Redirecting you to chat...
+         Account created. Redirecting you to chat...
             </div>
             <p className="toggle-text">
               <Link to="/login" className="toggle-link">Click here if you aren't redirected</Link>
