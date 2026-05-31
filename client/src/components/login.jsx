@@ -125,7 +125,7 @@ const Login = () => {
           {/* --- PASSWORD FIELD --- */}
           <div className="input-group">
             <label className="input-label" htmlFor="password">Password</label>
-            <div className="password-input-wrapper">
+            <div className="input-box">
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"

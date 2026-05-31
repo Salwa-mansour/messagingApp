@@ -170,10 +170,10 @@ const Register = () => {
               <div className="input-group">
                 <label className="input-label" htmlFor="username">
                   Username:
-                  <span className={validName ? "valid-icon" : "hide-icon"}>
+                  <span className={validName ? "valid" : "hide"}>
                     <FontAwesomeIcon icon={faCheck} />
                   </span>
-                  <span className={validName || !username ? "hide-icon" : "invalid-icon"}>
+                  <span className={validName || !username ? "hide" : "invalid"}>
                     <FontAwesomeIcon icon={faTimes} />
                   </span>
                 </label>
@@ -202,10 +202,10 @@ const Register = () => {
               <div className="input-group">
                 <label className="input-label" htmlFor="email">
                   Email:
-                  <span className={validEmail ? "valid-icon" : "hide-icon"}>
+                  <span className={validEmail ? "valid" : "hide"}>
                     <FontAwesomeIcon icon={faCheck} />
                   </span>
-                  <span className={validEmail || !email ? "hide-icon" : "invalid-icon"}>
+                  <span className={validEmail || !email ? "hide" : "invalid"}>
                     <FontAwesomeIcon icon={faTimes} />
                   </span>
                 </label>
@@ -232,14 +232,14 @@ const Register = () => {
               <div className="input-group">
                 <label className="input-label" htmlFor="password">
                   Password:
-                  <span className={validPassword ? "valid-icon" : "hide-icon"}>
+                  <span className={validPassword ? "valid" : "hide"}>
                     <FontAwesomeIcon icon={faCheck} />
                   </span>
-                  <span className={validPassword || !password ? "hide-icon" : "invalid-icon"}>
+                  <span className={validPassword || !password ? "hide" : "invalid"}>
                     <FontAwesomeIcon icon={faTimes} />
                   </span>
                 </label>
-                <div className="password-input-wrapper">
+                <div className="input-box">
                   <input
                     type={showPwd ? "text" : "password"}
                     id="password"
@@ -273,10 +273,10 @@ const Register = () => {
               <div className="input-group">
                 <label className="input-label" htmlFor="confirmPassword">
                   Confirm Password:
-                  <span className={validMatch && confirmPassword ? "valid-icon" : "hide-icon"}>
+                  <span className={validMatch && confirmPassword ? "valid" : "hide"}>
                     <FontAwesomeIcon icon={faCheck} />
                   </span>
-                  <span className={validMatch || !confirmPassword ? "hide-icon" : "invalid-icon"}>
+                  <span className={validMatch || !confirmPassword ? "hide" : "invalid"}>
                     <FontAwesomeIcon icon={faTimes} />
                   </span>
                 </label>
