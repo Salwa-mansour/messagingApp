@@ -6,3 +6,42 @@
 #root{
     background-color:#f3f4f6;
 }
+
+
+/* chat page styleins */
+
+.chat-dashboard{
+    width:min(100vw, 800px);
+    height:100vh;   
+    margin:0 auto;
+   
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+.chat-list,
+.chat-window{
+     background-color:rgba(0, 128, 0, 0.451);
+    padding:1rem;
+    grid-column: 1;
+    grid-row: 1;
+    border:1px solid rgb(158, 158, 158);
+
+}
+.chat-list{
+      background-color:rgba(245, 147, 123, 0.451);
+}
+@media (min-width: 769px) {
+  .chat-dashboard {
+    grid-template-columns: 300px 1fr; /* Fixed sidebar, expanding window */
+ 
+  }
+
+  .chat-list {
+    grid-column: 1;
+  }
+
+  .chat-window {
+    grid-column: 2;
+  }
+}

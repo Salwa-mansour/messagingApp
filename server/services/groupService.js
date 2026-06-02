@@ -4,17 +4,21 @@ import prisma from '../data/connection.js';
  * Finds an existing DM group between two specific users, 
  * or creates a brand new one if it doesn't exist.
  */
-export const findOrCreateDMGroup = async (userAId, userBId) => {
-  // 1. Look for an existing DM group that contains BOTH user IDs
-  const existingGroup = await prisma.group.findFirst({
+export const findDMGroup = async (userAId, userBId) => { 
+  // Look for an existing DM group that contains BOTH user IDs
+  return await prisma.group.findFirst({
     where: {
-      isDM: true,
+      isDM: true, // Double check your Schema has an 'isDM' field, it was missing from your schema dump!
       AND: [
-        { users: { some: { userId: userAId } } },
-        { users: { some: { userId: userBId } } }
+        { users: { some: { id: userAId } } }, // ✅ Changed userId to id
+        { users: { some: { id: userBId } } }  // ✅ Changed userId to id
       ]
     }
   });
+};
+export const findOrCreateDMGroup = async (userAId, userBId) => {
+  // 1. Look for an existing DM group that contains BOTH user IDs
+  const existingGroup = await findDMGroup(userAId, userBId);
 
   if (existingGroup) {
     return existingGroup; // Found it! Return the existing group context
@@ -30,6 +34,20 @@ export const findOrCreateDMGroup = async (userAId, userBId) => {
           { userId: userBId }
         ]
       }
+    }
+  });
+};
+export const getUserGroups = async (userId) => {
+  return await prisma.group.findMany({
+    where: {  
+      users: { 
+        some: { 
+          id: userId 
+        } 
+      }
+    },
+    include: {
+      users: true 
     }
   });
 };

@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import authRouter from './routes/authRouter.js';
 import messageRoutes from './routes/messageRouter.js';
+import groupRoutes from './routes/groupRouter.js';
 
 
 const app = express();
@@ -31,7 +32,9 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api', authRouter);
-app.use('/api/message', messageRoutes);;
+app.use('/api/message', messageRoutes);
+app.use('/api/group', groupRoutes);
+
 
 // Global Error Handler
 app.use((err, req, res, next) => {

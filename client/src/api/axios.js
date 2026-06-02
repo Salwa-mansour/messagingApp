@@ -1,11 +1,11 @@
 import axios from 'axios';
+const BASE_URL = 'http://localhost:3000/api';
 
-const API = axios.create({
-  baseURL: 'http://localhost:3000/api', // Maps to your Express port
-  withCredentials: true,               // CRITICAL: Tells Axios to include cookies across origins
-  headers: {
-    'Content-Type': 'application/json',
-  },
+export default axios.create({
+    baseURL: BASE_URL
 });
-
-export default API;
+export const axiosPrivate = axios.create({
+    baseURL: BASE_URL,
+    headers: { 'Content-Type': 'application/json' },
+    withCredentials: true
+});
