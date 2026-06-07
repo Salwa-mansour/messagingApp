@@ -8,7 +8,8 @@ import groupRoutes from './routes/groupRouter.js';
 
 
 const app = express();
-
+app.use(cookieParser()); 
+app.use(express.json());
 // Middleware
 const allowedOrigins = ['http://localhost:5173'];
 
@@ -28,8 +29,6 @@ const corsOptions = {
 // 2. Apply the middleware BEFORE your route handlers
 app.use(cors(corsOptions));
 
-app.use(express.json());
-app.use(cookieParser());
 
 app.use('/api', authRouter);
 app.use('/api/message', messageRoutes);

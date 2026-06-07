@@ -31,9 +31,10 @@ export const loginUser = async (req, res) => {
 
     // 5. Send Refresh Token in a secure HttpOnly cookie
     res.cookie('refreshToken', refreshToken, {
-      httpOnly: true, // Prevents cross-site scripting (XSS) access via JavaScript
-      secure: process.env.NODE_ENV === 'production', // Requires HTTPS in production
-      sameSite: 'strict', // Prevents cross-site request forgery (CSRF)
+      httpOnly: true, 
+      path: '/', 
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
     });
 
@@ -101,8 +102,9 @@ export const registerUser = async (req, res) => {
     // 9. Bake the Refresh Token into the secure HttpOnly Cookie
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
+       path: '/', 
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
@@ -124,8 +126,9 @@ export const registerUser = async (req, res) => {
 };
 
 export const refreshToken = async (req, res) => {
-  // 1. Grab the token from cookies (requires cookie-parser middleware in server.js)
   const cookies = req.cookies;
+  
+  // 1. Look for the cookie payload
   if (!cookies?.refreshToken) {
     return res.status(401).json({ message: 'No refresh token provided.' });
   }
@@ -133,53 +136,61 @@ export const refreshToken = async (req, res) => {
   const incomingRefreshToken = cookies.refreshToken;
 
   try {
-    // 2. Look up the user by this specific token string
+    // 2. Fetch user matching the incoming token string
     const user = await userService.findUserByRefreshToken(incomingRefreshToken);
-    
-    // Security Warning: If a token doesn't match the database, it might be an old or stolen token!
+   console.log("=== REFRESH DEBUG ===");
+    console.log("1. Incoming Cookie exists length:", incomingRefreshToken.length);
+    console.log("2. Found User in DB by this cookie?:", user ? `Yes (${user.username})` : "NO (Database returned null!)");
+    if (user) {
+       console.log("3. Does cookie match what is in DB?:", user.refreshToken === incomingRefreshToken ? "MATCH" : "MISMATCH!");
+    }
+    console.log("=====================");
     if (!user) {
       return res.status(403).json({ message: 'Invalid or expired session token.' });
     }
 
-    // 3. Verify the token signature and expiration date
-    jwt.verify(
-      incomingRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET,
-      async (err, decoded) => {
-        // If the token is corrupted or expired
-        if (err || user.id !== decoded.userId) {
-          return res.status(403).json({ message: 'Token verification failed.' });
-        }
+    // 3. Verify token synchronously without raw tracking callbacks
+    let decoded;
+    try {
+      decoded = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET);
+    } catch (jwtErr) {
+      // Catch expired signatures or altered cryptographic data instantly
+      console.error("JWT Verify Error:", jwtErr.message);
+      return res.status(403).json({ message: 'Token verification failed.' });
+    }
 
-        // ─── REFRESH TOKEN ROTATION ───────────────────────────
-        // 4. Generate a fresh new pair of tokens
-      const { accessToken: newAccessToken, refreshToken: newRefreshToken } = generateTokens(user);
+    // 4. Validate payload logic matching user database entry
+    if (user.id !== decoded.userId) {
+      return res.status(403).json({ message: 'Token ownership validation failed.' });
+    }
 
-        // 5. Save the brand new refresh token string over the old one in the DB
-        await userService.updateUserRefreshToken(user.id, newRefreshToken);
+    // ─── REFRESH TOKEN ROTATION ───────────────────────────
+    // 5. Generate fresh tokens sequentially
+    const { accessToken: newAccessToken, refreshToken: newRefreshToken } = generateTokens(user);
 
-        // 6. Overwrite the client's cookie with the new rotated refresh token
-        res.cookie('refreshToken', newRefreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-        });
+    // 6. Persist rotation inside database safely
+    await userService.updateUserRefreshToken(user.id, newRefreshToken);
 
-        // 7. Send the brand new access token back to React
-        return res.json({ 
-          accessToken: newAccessToken,
-          user: { id: user.id, username: user.username, email: user.email }
-        });
-      }
-    );
+    // 7. Re-issue fresh client-side cookie string layout
+    res.cookie('refreshToken', newRefreshToken, {
+      httpOnly: true,
+      path: '/', 
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // 8. Return data back to frontend hook safely
+    return res.status(200).json({ 
+      accessToken: newAccessToken,
+      user: { id: user.id, username: user.username, email: user.email }
+    });
 
   } catch (error) {
-    console.error('Refresh Token Error:', error);
+    console.error('Refresh Token Controller Error:', error);
     return res.status(500).json({ message: 'Internal server error during session refresh.' });
   }
 };
-
 export const logoutUser = async (req, res) => {
   // 1. Grab the refresh token from cookies
   console.log('Logout Request Cookies:', req.cookies); // Debugging line to check incoming cookies
@@ -204,8 +215,9 @@ export const logoutUser = async (req, res) => {
     // The options object MUST perfectly match the configuration used when creating it!
     res.clearCookie('refreshToken', {
       httpOnly: true,
+        path: '/', 
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
+      sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     });
 
     return res.status(200).json({ message: 'Logged out successfully!' });

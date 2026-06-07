@@ -3,7 +3,9 @@ import Login from "./components/Login";
 import Register from "./components/Register";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PersistLogin from "./components/PersistLogin";
 import ChatDashboard from "./components/chatBoard";
+import AllUsers from "./components/AllUsers";
 
 
 function App() {
@@ -17,10 +19,12 @@ function App() {
         <Route path="register" element={<Register />} />
 
         {/* Protected Application Routes */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="chat" element={<ChatDashboard />} />
+        <Route element={<PersistLogin />}>
+          <Route element={<ProtectedRoute />}>
+              <Route path="chat" element={<ChatDashboard />} />
+              <Route path="users" element={<AllUsers />} />
+          </Route>
         </Route>
-
         {/* Fallbacks & Redirects */}
         <Route path="/" element={<Navigate to="/chat" replace />} />
         <Route path="*" element={<div style={{ padding: "20px" }}><h2>404 - Page Not Found</h2></div>} />

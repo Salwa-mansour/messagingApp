@@ -5,13 +5,25 @@ const ProtectedRoute = () => {
   const { auth } = useAuth();
   const location = useLocation();
 
-  // If the user has an authentication token, let them through to the child routes
-  // Otherwise, kick them back to login but remember where they wanted to go
-  return auth?.token ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/login" state={{ from: location }} replace />
-  );
+  console.log("ProtectedRoute evaluation state::", auth);
+
+  // 💡 FIX: Access localStorage directly to see if the user wanted to be remembered.
+  // If they do, and memory state is empty, let PersistLogin handle the loading screen first!
+  const isPersistChecked = JSON.parse(localStorage.getItem("persist")) || false;
+
+  // If we have a token, they are allowed in
+  if (auth?.token) {
+    return <Outlet />;
+  }
+
+  // If there's no token, BUT the user trusted this device, pause and don't redirect yet.
+  // PersistLogin will change the loading state and populate the token.
+  if (isPersistChecked && !auth?.token) {
+    return <Outlet />; 
+  }
+
+  // Otherwise, they are truly logged out. Send them away.
+  return <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 export default ProtectedRoute;
