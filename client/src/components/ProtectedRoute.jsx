@@ -5,8 +5,7 @@ const ProtectedRoute = () => {
   const { auth } = useAuth();
   const location = useLocation();
 
-  console.log("ProtectedRoute evaluation state::", auth);
-
+ 
   // 💡 FIX: Access localStorage directly to see if the user wanted to be remembered.
   // If they do, and memory state is empty, let PersistLogin handle the loading screen first!
   const isPersistChecked = JSON.parse(localStorage.getItem("persist")) || false;

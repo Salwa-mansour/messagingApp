@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useRefreshToken from "../hooks/useRefreshToken"; 
 import { useAuth } from "../hooks/useAuth";
 import useToggle from "../hooks/useToggle";
@@ -9,6 +9,10 @@ const PersistLogin = () => {
   const refresh = useRefreshToken();
   const { auth } = useAuth();
   const [persist] = useToggle("persist", false);
+  
+  // 💡 CIRCUIT BREAKER: Prevents React from executing the effect block 
+  // more than once per mount cycle, even if state or context updates.
+  const hasRun = useRef(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -23,9 +27,10 @@ const PersistLogin = () => {
       }
     };
 
-    // This runs on mount. If there's already a token in memory, skip.
-    // If there's no token but persist is true, try to refresh.
-    if (!auth?.token && persist) {
+    // 💡 ADJUSTED LOGIC: Check our ref flag alongside your conditions.
+    // This blocks the infinite loop if a network error fires setAuth({}).
+    if (!auth?.token && persist && !hasRun.current) {
+      hasRun.current = true; // Lock the gate instantly
       verifyRefreshToken();
     } else {
       setIsLoading(false);
@@ -34,8 +39,8 @@ const PersistLogin = () => {
     return () => {
       isMounted = false;
     };
- 
-  }, [persist, refresh]); 
+    // Kept clean, tracking standard hook triggers stably
+  }, [persist, refresh, auth?.token]); 
 
   return !persist ? <Outlet /> : isLoading ? <p>Loading session...</p> : <Outlet />;
 };

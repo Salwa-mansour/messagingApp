@@ -138,13 +138,7 @@ export const refreshToken = async (req, res) => {
   try {
     // 2. Fetch user matching the incoming token string
     const user = await userService.findUserByRefreshToken(incomingRefreshToken);
-   console.log("=== REFRESH DEBUG ===");
-    console.log("1. Incoming Cookie exists length:", incomingRefreshToken.length);
-    console.log("2. Found User in DB by this cookie?:", user ? `Yes (${user.username})` : "NO (Database returned null!)");
-    if (user) {
-       console.log("3. Does cookie match what is in DB?:", user.refreshToken === incomingRefreshToken ? "MATCH" : "MISMATCH!");
-    }
-    console.log("=====================");
+  
     if (!user) {
       return res.status(403).json({ message: 'Invalid or expired session token.' });
     }
