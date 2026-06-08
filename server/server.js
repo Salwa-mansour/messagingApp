@@ -23,7 +23,9 @@ const corsOptions = {
         }
     },
     credentials: true, // Crucial for handling cookies/refresh tokens
-    optionsSuccessStatus: 200
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 // 2. Apply the middleware BEFORE your route handlers

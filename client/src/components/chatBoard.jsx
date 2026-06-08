@@ -1,4 +1,4 @@
-import { useContext, useState,useEffect } from "react"; // Added useState just in case isLoading is local
+import { useContext, useState, useEffect } from "react"; 
 import { AuthContext } from "../context/AuthContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
@@ -6,75 +6,89 @@ import "../css/index.css";
 
 const ChatDashboard = () => {
   const [chatRooms, setChatRooms] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // 💡 Fix 1: Default to true so it shows loading first
+  const [isLogingOut, setIsLogingOut] = useState(false);
+
   const axiosPrivate = useAxiosPrivate();
-  const fetchChatRooms = async () => {
-    try {
-      const response = await axiosPrivate.get("/group/user-groups", { withCredentials: true });
-      setChatRooms(response.data);
+  const navigate = useNavigate();
+  const { auth, setAuth } = useContext(AuthContext);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchChatRooms = async () => {
+      try {
+        setIsLoading(true); // 💡 Ensure loading state triggers on execution
+        const response = await axiosPrivate.get("/group/user-groups");
+        if (isMounted) {
+          console.log("Successfully loaded rooms:", response.data);
+          setChatRooms(response.data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch chat rooms:", err);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false); // 💡 Fix 2: Turn loading off once the array arrives!
+        }
+      }
+    };
+
+    if (auth?.token) {
+      fetchChatRooms();
+    } else {
+      setIsLoading(false);
     }
-    catch (err) {
-      console.error("Failed to fetch chat rooms:", err);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [axiosPrivate, auth?.token]);
+
+  const handleLogout = async (e) => {
+    if (e) e.preventDefault();
+    setIsLogingOut(true);
+
+    localStorage.removeItem("persist"); 
+    setAuth({});
+
+    try {
+      // 💡 Fix 3: Changed 'axios' to 'axiosPrivate' to prevent a 'ReferenceError: axios is not defined' crash
+      await axiosPrivate.post('/logout', {}); 
+    } catch (err) {
+      console.error("Backend failed to clear session:", err);
+    } finally {
+      setIsLogingOut(false);
+      navigate("/login", { replace: true });
     }
   };
 
-  useEffect(() => {
-    fetchChatRooms();
-    console.log("Fetched chat rooms:", chatRooms);
-  }, []);
-
-
-  // 1. Initialize navigate hook
-  const navigate = useNavigate();
-
-  // 2. Destructure setAuth alongside auth from your context
-  const { auth, setAuth } = useContext(AuthContext);
-
-  // 3. Keep track of loading state locally if it's not global
-  const [isLoading, setIsLoading] = useState(false);
-
-const handleLogout = async (e) => {
-  if (e) e.preventDefault();
-  setIsLoading(true);
-
-  // 1. CRITICAL STEP: Turn off the persist flag in localStorage first!
-  // This completely stops PersistLogin from firing verifyRefreshToken()
-  localStorage.removeItem("persist"); 
-
-  // 2. Force clear your frontend state out of memory
-  setAuth({});
-
-  try {
-    // 3. Clear your backend session cookie
-    await axios.post('/logout', {}, { withCredentials: true });
-  } catch (err) {
-    console.error("Backend failed to clear session:", err);
-  } finally {
-    setIsLoading(false);
-    // 4. Send them clean away to the login view
-    navigate("/login", { replace: true });
+  // 💡 Safely intercept layout if database records are still processing
+  if (isLoading) {
+    return (
+      <div className="loading-screen">
+        <p>Loading chat rooms...</p>
+      </div>
+    );
   }
-};
 
   return (
     <>
-      {/* <form onSubmit={handleLogout}>
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? "Logging out..." : "Logout"}
-        </button>
-      </form>
-
-      <div style={{ padding: "20px" }}>
-        <h2>Chat Dashboard Workspace</h2>
-        <p>Welcome! You successfully authenticated.</p> */}
-        {/* <p>{JSON.stringify(auth?.user)}</p> */}
-      {/* </div> */}
-
-        <section className="chat-dashboard">
-           <div className="chat-list">
-           </div>
-            <div className="chat-window"> </div>
-        </section>
-
+      <section className="chat-dashboard">
+        <ul className="chat-list">
+          {chatRooms.length > 0 ? (
+            chatRooms.map((room) => (
+              <li key={room.id} className="chat-room"> 
+                <h3>{room.name}</h3>
+              </li>
+            ))
+          ) : (
+            <p>No chat rooms available.</p>
+          )}
+        </ul>
+        <div className="chat-window">
+          {/* Main chat log messages template layout can follow here */}
+        </div>
+      </section>
     </>
   );
 };

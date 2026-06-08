@@ -38,25 +38,26 @@ export const findOrCreateDMGroup = async (userAId, userBId) => {
   });
 };
 export const getUserGroups = async (userId) => {
-  console.log("--- DEBUG: getUserGroups Execution ---");
-  console.log("Passed userId Value:", userId);
-  console.log("Passed userId Type :", typeof userId);
-  console.log("---------------------------------------");
+  if (!userId) return [];
 
-  if (!userId) {
-    console.error("CRITICAL ERROR: userId is completely missing or undefined!");
-    return [];
-  }
+  console.log(`Executing targeted database query for user: ${userId}`);
+
   return await prisma.group.findMany({
-    where: {  
-      users: { 
-        some: { 
-          id: userId 
-        } 
+    where: {
+      users: {
+        some: {
+          id: userId
+        }
       }
     },
     include: {
-      users: true 
+      users: {
+        select: {
+          id: true,
+          username: true,
+          status: true
+        }
+      }
     }
   });
 };
