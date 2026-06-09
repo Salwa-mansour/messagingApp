@@ -1,8 +1,22 @@
 import * as messageService from '../services/messageService.js';
 import * as groupService from '../services/groupService.js';
 
+export const getGroupMessages = async (req, res) => {
+  const groupId = req.params.groupId;
+
+  try {
+    const messages = await messageService.getMessagesByGroupId(groupId);
+    return res.status(200).json(messages);
+  }
+  catch (error) {
+    console.error('Get Group Messages Error:', error);
+    return res.status(400).json({ message: 'Failed to retrieve messages for the group.' });
+  }
+};
+
 export const sendMessage = async (req, res) => {
-  const { content, groupId, recipientId } = req.body;
+  const { groupId, recipientId } = req.query; // Accept either groupId or recipientId as query parameters
+  const { content } = req.body;
   const senderId = req.user.userId; // Provided by your auth bouncer middleware
 
   // 1. Validation

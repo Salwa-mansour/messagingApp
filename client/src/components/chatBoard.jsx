@@ -7,8 +7,8 @@ import "../css/index.css";
 const ChatDashboard = () => {
   const [chatRooms, setChatRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 💡 Fix 1: Default to true so it shows loading first
-  const [isLogingOut, setIsLogingOut] = useState(false);
-
+  const [currentRoom, setCurrentRoom] = useState(null);
+  const [message, setMessage] = useState([]);
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const { auth, setAuth } = useContext(AuthContext);
@@ -44,24 +44,18 @@ const ChatDashboard = () => {
     };
   }, [axiosPrivate, auth?.token]);
 
-  const handleLogout = async (e) => {
-    if (e) e.preventDefault();
-    setIsLogingOut(true);
-
-    localStorage.removeItem("persist"); 
-    setAuth({});
-
+useEffect(() => {
+ const fetchMessages = async () => {
+   if (!currentRoom) return;
     try {
-      // 💡 Fix 3: Changed 'axios' to 'axiosPrivate' to prevent a 'ReferenceError: axios is not defined' crash
-      await axiosPrivate.post('/logout', {}); 
+      const response = await axiosPrivate.get(`/messages/${currentRoom}`);
+      setMessage(response.data);
     } catch (err) {
-      console.error("Backend failed to clear session:", err);
-    } finally {
-      setIsLogingOut(false);
-      navigate("/login", { replace: true });
+      console.error("Failed to fetch messages:", err);
     }
   };
-
+  fetchMessages();
+}, [currentRoom, chatRooms, axiosPrivate,auth?.token ]);
   // 💡 Safely intercept layout if database records are still processing
   if (isLoading) {
     return (
@@ -77,7 +71,7 @@ const ChatDashboard = () => {
         <ul className="chat-list">
           {chatRooms.length > 0 ? (
             chatRooms.map((room) => (
-              <li key={room.id} className="chat-room"> 
+              <li key={room.id} className="chat-room" onClick={() => setCurrentRoom(room.id)}>
                 <h3>{room.name}</h3>
               </li>
             ))
@@ -86,7 +80,27 @@ const ChatDashboard = () => {
           )}
         </ul>
         <div className="chat-window">
-          {/* Main chat log messages template layout can follow here */}
+          {/*chat messages*/}
+          <section className="messages">
+            {currentRoom ? (
+                  message.length > 0 ? (
+                    message.map((msg) => (
+                      <div key={msg.id} className="message">  
+                        <p><strong>{msg.sender.username}:</strong> {msg.content}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No messages in this room yet.</p>
+                  )
+            ) : (
+              <p>Select a chat room to view messages.</p>
+            )}
+          </section>
+          {/*
+          send message form
+          
+          
+          */}
         </div>
       </section>
     </>
