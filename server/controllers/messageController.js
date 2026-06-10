@@ -1,6 +1,6 @@
 import * as messageService from '../services/messageService.js';
 import * as groupService from '../services/groupService.js';
-import { findUserById } from '../services/userService.js';
+import { findUserById } from '../services/authService.js';
 
 export const getGroupMessages = async (req, res) => {
   const groupId = req.params.groupId;

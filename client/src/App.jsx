@@ -4,8 +4,9 @@ import Register from "./components/Register";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PersistLogin from "./components/PersistLogin";
-import ChatDashboard from "./components/chatBoard";
+import ChatDashboard from "./components/ChatBoard";
 import AllUsers from "./components/AllUsers";
+import Contacts from "./components/Contacts";
 
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
               <Route path="chat" element={<ChatDashboard />} />
               <Route path="users" element={<AllUsers />} />
+              <Route path="contacts" element={<Contacts />} />
           </Route>
         </Route>
         {/* Fallbacks & Redirects */}

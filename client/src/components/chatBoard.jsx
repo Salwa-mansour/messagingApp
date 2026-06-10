@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
-import LogoutBtn from "./LogoutBtn";
+
 import "../css/index.css";
 
 const ChatDashboard = () => {
@@ -104,7 +104,7 @@ const ChatDashboard = () => {
 
   return (
     <>
-      <LogoutBtn />
+    
       <section className="chat-dashboard">
         {/* Left Side Panel: Chat Rooms */}
         <ul className="chat-list">

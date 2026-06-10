@@ -5,7 +5,7 @@ import 'dotenv/config';
 import authRouter from './routes/authRouter.js';
 import messageRoutes from './routes/messageRouter.js';
 import groupRoutes from './routes/groupRouter.js';
-
+import usersRouter from './routes/usersRouter.js';
 
 const app = express();
 app.use(cookieParser()); 
@@ -35,7 +35,7 @@ app.use(cors(corsOptions));
 app.use('/api', authRouter);
 app.use('/api/message', messageRoutes);
 app.use('/api/group', groupRoutes);
-
+app.use('/api/users', usersRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import * as userService from '../services/userService.js';
+import * as authService from '../services/authService.js';
 import { generateTokens } from '../utils/tokenUtils.js';
 import jwt from 'jsonwebtoken';
 
@@ -12,7 +12,7 @@ export const loginUser = async (req, res) => {
 
   try {
     // 1. Verify user exists
-    const user = await userService.findUserByEmail(email);
+    const user = await authService.findUserByEmail(email);
     if (!user) {
       return res.status(401).json({ message: 'Invalid email or password.' });
     }
@@ -27,7 +27,7 @@ export const loginUser = async (req, res) => {
    const { accessToken, refreshToken } = generateTokens(user);
 
     // 4. Save refresh token to the database via service layer
-    await userService.updateUserRefreshToken(user.id, refreshToken);
+    await authService.updateUserRefreshToken(user.id, refreshToken);
 
     // 5. Send Refresh Token in a secure HttpOnly cookie
     res.cookie('refreshToken', refreshToken, {
@@ -71,7 +71,7 @@ export const registerUser = async (req, res) => {
 
   try {
     // 4. Check if user already exists
-    const existingUser = await userService.findUserByEmailOrUsername(email, username);
+    const existingUser = await authService.findUserByEmailOrUsername(email, username);
     if (existingUser) {
       return res.status(409).json({ message: 'Username or Email is already taken.' });
     }
@@ -80,13 +80,13 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 6. Find or create the default chat room
-    let defaultGroup = await userService.findDefaultGroup();
+    let defaultGroup = await authService.findDefaultGroup();
     if (!defaultGroup) {
-      defaultGroup = await userService.createDefaultGroup();
+      defaultGroup = await authService.createDefaultGroup();
     }
 
     // 7. Save to DB (Notice we ONLY pass password, never confirmPassword)
-    const newUser = await userService.createUserWithGroup(
+    const newUser = await authService.createUserWithGroup(
       username, 
       email, 
       hashedPassword, 
@@ -97,7 +97,7 @@ export const registerUser = async (req, res) => {
     const { accessToken, refreshToken } = generateTokens(newUser);
 
     // 8. Save the refresh token string into the database
-    await userService.updateUserRefreshToken(newUser.id, refreshToken);
+    await authService.updateUserRefreshToken(newUser.id, refreshToken);
 
     // 9. Bake the Refresh Token into the secure HttpOnly Cookie
     res.cookie('refreshToken', refreshToken, {
@@ -137,7 +137,7 @@ export const refreshToken = async (req, res) => {
 
   try {
     // 2. Fetch user matching the incoming token string
-    const user = await userService.findUserByRefreshToken(incomingRefreshToken);
+    const user = await authService.findUserByRefreshToken(incomingRefreshToken);
   
     if (!user) {
       return res.status(403).json({ message: 'Invalid or expired session token.' });
@@ -163,7 +163,7 @@ export const refreshToken = async (req, res) => {
     const { accessToken: newAccessToken, refreshToken: newRefreshToken } = generateTokens(user);
 
     // 6. Persist rotation inside database safely
-    await userService.updateUserRefreshToken(user.id, newRefreshToken);
+    await authService.updateUserRefreshToken(user.id, newRefreshToken);
 
     // 7. Re-issue fresh client-side cookie string layout
     res.cookie('refreshToken', newRefreshToken, {
@@ -198,11 +198,11 @@ export const logoutUser = async (req, res) => {
 
   try {
     // 2. Find the user associated with this token string
-    const user = await userService.findUserByRefreshToken(incomingRefreshToken);
+    const user = await authService.findUserByRefreshToken(incomingRefreshToken);
     
     // If a matching user is found, wipe the database token entry
     if (user) {
-      await userService.clearUserRefreshToken(user.id);
+      await authService.clearUserRefreshToken(user.id);
     }
 
     // 3. Clear the cookie from the client browser/Postman
