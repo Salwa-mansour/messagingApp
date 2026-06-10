@@ -4,7 +4,7 @@ import { authenticateToken } from '../middleware/authMiddleware.js'; // <-- Impo
 
 const router = Router();
 
-router.post('/send', authenticateToken, sendMessage);
-router.get('/messages/:groupId', authenticateToken, getGroupMessages);
+router.post('/send/:targetId', authenticateToken, sendMessage);
+router.get('/:groupId', authenticateToken, getGroupMessages);
 
 export default router;

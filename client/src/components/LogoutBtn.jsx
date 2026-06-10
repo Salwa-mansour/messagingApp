@@ -1,7 +1,14 @@
+import { useState,useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { AuthContext } from "../context/AuthContext";
+
+
 function LogoutBtn() {
   const [isLogingOut, setIsLogingOut] = useState(false);
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
+  const { setAuth } = useContext(AuthContext);
 
   const handleLogout = async (e) => {
     if (e) e.preventDefault();

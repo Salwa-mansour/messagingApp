@@ -65,7 +65,11 @@ export const findUserByEmail = async (email) => {
     where: { email }
   });
 };
-
+export const findUserById = async (id) => {
+  return await prisma.user.findUnique({
+    where: { id }
+  });
+};
 /**
  * Updates a user's stored refresh token string
  */

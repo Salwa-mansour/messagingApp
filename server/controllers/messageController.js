@@ -1,5 +1,6 @@
 import * as messageService from '../services/messageService.js';
 import * as groupService from '../services/groupService.js';
+import { findUserById } from '../services/userService.js';
 
 export const getGroupMessages = async (req, res) => {
   const groupId = req.params.groupId;
@@ -14,41 +15,48 @@ export const getGroupMessages = async (req, res) => {
   }
 };
 
-export const sendMessage = async (req, res) => {
-  const { groupId, recipientId } = req.query; // Accept either groupId or recipientId as query parameters
-  const { content } = req.body;
-  const senderId = req.user.userId; // Provided by your auth bouncer middleware
 
-  // 1. Validation
+export const sendMessage = async (req, res) => {
+  const { targetId } = req.params; // 💡 Now reads cleanly from the URL path directly
+  const { content } = req.body;
+  const senderId = req.user.userId;
+
   if (!content || !content.trim()) {
     return res.status(400).json({ message: 'Message content cannot be empty.' });
   }
 
-  if (!groupId && !recipientId) {
-    return res.status(400).json({ message: 'Must provide either a groupId or a recipientId.' });
-  }
-
   try {
-    let targetGroupId = groupId;
+    let targetGroupId = null;
 
-    // 2. If there is no groupId, it's a DM. Run the Find-or-Create sequence!
-    if (!targetGroupId && recipientId) {
-      // Prevent users from starting a DM with themselves
-      if (senderId === recipientId) {
+    // Check if the targetId belongs to an existing group
+    const existingGroup = await groupService.getGroupById(targetId);
+
+    if (existingGroup) {
+      // Scenario A: It's a Group Chat message!
+      targetGroupId = existingGroup.id;
+    } else {
+      // Scenario B: It's a DM! Check if it's a valid recipient user
+      if (senderId === targetId) {
         return res.status(400).json({ message: 'You cannot start a direct message thread with yourself.' });
       }
 
-      const dmGroup = await groupService.findOrCreateDMGroup(senderId, recipientId);
-      targetGroupId = dmGroup.id; // Assign the newly found/created group ID
+      const recipientUser = await findUserById(targetId);
+
+      if (!recipientUser) {
+        return res.status(404).json({ message: 'Target chat room or user could not be found.' });
+      }
+
+      // Run your Find-or-Create direct conversation sequence
+      const dmGroup = await groupService.findOrCreateDMGroup(senderId, targetId);
+      targetGroupId = dmGroup.id;
     }
 
-    // 3. Save the message using the resolved group ID
+    // Save the message
     const newMessage = await messageService.createMessage(content, senderId, targetGroupId);
 
-    // 4. Return the message along with the target group identifier
     return res.status(201).json({
       message: 'Message sent successfully!',
-      groupId: targetGroupId, // React needs this to know which room history to update
+      groupId: targetGroupId,
       data: newMessage
     });
 
