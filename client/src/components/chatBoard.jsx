@@ -1,24 +1,35 @@
 import { useContext, useState, useEffect } from "react"; 
 import { AuthContext } from "../context/AuthContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate, useLocation } from "react-router-dom";
+import MessageForm from "./MessageForm";
 import "../css/index.css";
 
 const ChatDashboard = () => {
+  const location = useLocation();
+  const axiosPrivate = useAxiosPrivate();
+  const navigate = useNavigate();
+  const { auth } = useContext(AuthContext);
+
   const [chatRooms, setChatRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
   const [currentRoom, setCurrentRoom] = useState(null);
-  
-  // 💡 Fix 1: Decouple the chat history array from the typed input string
   const [messages, setMessages] = useState([]); 
-  const [newMessageText, setNewMessageText] = useState(""); 
 
-  const axiosPrivate = useAxiosPrivate();
-  const navigate = useNavigate();
-  const { auth, setAuth } = useContext(AuthContext);
+  // 💡 State to track a user context passed from /users directory before a group exists
+  const [pendingDM, setPendingDM] = useState(null);
 
-  // Fetch Chat Rooms
+  // Helper to re-fetch the room listings for the left side panel
+  const refreshChatRoomsList = async () => {
+    try {
+      const response = await axiosPrivate.get("/group/user-groups");
+      setChatRooms(response.data);
+    } catch (err) {
+      console.error("Failed to refresh side bar channels:", err);
+    }
+  };
+
+  // 1. Fetch Chat Rooms on Mount
   useEffect(() => {
     let isMounted = true;
     const fetchChatRooms = async () => {
@@ -43,12 +54,25 @@ const ChatDashboard = () => {
       setIsLoading(false);
     }
 
-    return () => {
-      isMounted = false;
-    };
+    return () => { isMounted = false; };
   }, [axiosPrivate, auth?.token]);
 
-  // Fetch Messages for Selected Room
+  // 2. Intercept Router Redirection Context from AllUsers
+  useEffect(() => {
+    if (location.state?.recipientId) {
+      setPendingDM({
+        id: location.state.recipientId,
+        username: location.state.recipientName
+      });
+      setCurrentRoom(null);
+      setMessages([]);
+
+      // Wipe routing state out of browser memory so reloads don't re-trigger focus shifts
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
+
+  // 3. Fetch Messages for Selected Room
   useEffect(() => {
     let isMounted = true;
     const fetchMessages = async () => {
@@ -56,7 +80,6 @@ const ChatDashboard = () => {
       try {
         const response = await axiosPrivate.get(`/message/${currentRoom}`);
         if (isMounted) {
-          // Fallback defensively to an array if nested
           const history = Array.isArray(response.data) ? response.data : response.data.messages || [];
           setMessages(history);
         }
@@ -65,34 +88,13 @@ const ChatDashboard = () => {
       }
     };
 
-    fetchMessages();
-
-    return () => {
-      isMounted = false;
-    };
-    // Removed chatRooms dependency here to stop infinite re-fetch loops when rooms update
-  }, [currentRoom, axiosPrivate]);
-
-  // Handle Sending Message
-  const handleSendMessage = async (e) => {
-    e.preventDefault();
-    if (!currentRoom || !newMessageText.trim()) return;
-
-    try {
-      const response = await axiosPrivate.post(`/message/send/${currentRoom}`, {
-        content: newMessageText, // Send the explicit string state
-      });
-
-      // 💡 Fix 2: Append the server's clean returned message to your history array
-      // Depending on your backend res.json structure, extract response.data or response.data.data
-      const rawMessage = response.data?.data || response.data;
-      
-      setMessages((prevMessages) => [...prevMessages, rawMessage]);
-      setNewMessageText(""); // 💡 Clean clear out the text input field upon delivery success!
-    } catch (err) {
-      console.error("Failed to send message:", err);
+    if (currentRoom) {
+      fetchMessages();
+      setPendingDM(null); // Wipe pending data if navigating back to standard rooms
     }
-  };
+
+    return () => { isMounted = false; };
+  }, [currentRoom, axiosPrivate]);
 
   if (isLoading) {
     return (
@@ -102,9 +104,20 @@ const ChatDashboard = () => {
     );
   }
 
+  // Dynamic window layout title text generator
+  const getActiveChatName = () => {
+    if (currentRoom) {
+      const current = chatRooms.find(r => r.id === currentRoom);
+      return current ? current.name : "Active Chat Channel";
+    }
+    if (pendingDM) {
+      return `Direct Message with ${pendingDM.username}`;
+    }
+    return "Select a conversation room";
+  };
+
   return (
     <>
-    
       <section className="chat-dashboard">
         {/* Left Side Panel: Chat Rooms */}
         <ul className="chat-list">
@@ -115,7 +128,7 @@ const ChatDashboard = () => {
                 className={`chat-room ${currentRoom === room.id ? "active-room" : ""}`} 
                 onClick={() => setCurrentRoom(room.id)}
               >
-                <h3>{room.name}</h3>
+                <h3>{room?.name}</h3>
               </li>
             ))
           ) : (
@@ -125,8 +138,12 @@ const ChatDashboard = () => {
 
         {/* Right Side Panel: Active Chat View */}
         <div className="chat-window">
+          <header className="chat-header-pane">
+            <h2>{getActiveChatName()}</h2>
+          </header>
+
           <section className="messages">
-            {currentRoom ? (
+            {(currentRoom || pendingDM) ? (
               messages.length > 0 ? (
                 messages.map((msg) => (
                   <div key={msg.id || Math.random()} className="message">  
@@ -136,24 +153,25 @@ const ChatDashboard = () => {
                   </div>
                 ))
               ) : (
-                <p>No messages in this room yet.</p>
+                <p>No messages in this room yet. Send a message to start conversing!</p>
               )
             ) : (
               <p>Select a chat room to view messages.</p>
             )}
           </section>
 
-          {/* Form Processing Footer */}
-          <form className="message-form" onSubmit={handleSendMessage}>
-            <input
-              type="text" 
-              placeholder="Type your message..."
-              value={newMessageText} // 💡 Bind to text string state
-              onChange={(e) => setNewMessageText(e.target.value)}
-              disabled={!currentRoom}
-            />
-            <button type="submit" disabled={!currentRoom || !newMessageText.trim()}>Send</button>
-          </form>
+          {/* 💡 Form Processing Footer with Dynamic Props */}
+          <MessageForm 
+            currentRoom={currentRoom}
+            pendingDM={pendingDM}
+            onMessageSent={(newMsg) => setMessages((prev) => [...prev, newMsg])}
+            onGroupCreated={(newGroupId) => {
+              setCurrentRoom(newGroupId);
+              setPendingDM(null);
+              refreshChatRoomsList(); // Automatically updates the left sidebar listing row!
+            }}
+          />
+
         </div>
       </section>
     </>

@@ -1,5 +1,7 @@
 import useAxiosPrivate from "./useAxiosPrivate";
 import { useEffect, useState } from "react";
+// 💡 Import axios to access the validation helper
+import axios from "axios"; 
 
 const useGetUsers = () => {
   const [users, setUsers] = useState([]);
@@ -18,28 +20,29 @@ const useGetUsers = () => {
         if (isMounted) {
           setUsers(response.data);
         }
-        } catch (err) {
-            if (err.name !== "CanceledError") {
-                console.error("Failed to fetch users:", err);
-                setError(err);
-            }
-        } finally {
-            if (isMounted) {
-                setIsLoading(false);
-            }
+      } catch (err) {
+       
+        // Only log real network or authentication failures
+        if (isMounted) {
+          console.error("Failed to fetch users:", err);
+          setError(err);
         }
-    }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
 
     fetchUsers();
 
     return () => {
-        isMounted = false;  
+      isMounted = false;  
+      controller.abort();
+    };
+  }, [axiosPrivate]); 
 
-        controller.abort();
-    }
-    }, [axiosPrivate]); 
-
-    return { users, isLoading, error };
-}
+  return { users, isLoading, error };
+};
 
 export default useGetUsers;

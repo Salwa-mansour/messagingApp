@@ -45,3 +45,13 @@
     grid-column: 2;
   }
 }
+.active-room{
+    background-color:rgba(43, 48, 43, 0.451);
+}
+li.chat-room{
+    list-style: none;
+    padding:0.5rem;
+    cursor: pointer;
+    margin-bottom:  0.2rem;
+    border:#bec5d3 solid 1px;
+}

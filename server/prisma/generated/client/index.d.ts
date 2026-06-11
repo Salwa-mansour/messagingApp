@@ -2359,6 +2359,7 @@ export namespace Prisma {
     isDefault: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDM: boolean | null
   }
 
   export type GroupMaxAggregateOutputType = {
@@ -2367,6 +2368,7 @@ export namespace Prisma {
     isDefault: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    isDM: boolean | null
   }
 
   export type GroupCountAggregateOutputType = {
@@ -2375,6 +2377,7 @@ export namespace Prisma {
     isDefault: number
     createdAt: number
     updatedAt: number
+    isDM: number
     _all: number
   }
 
@@ -2385,6 +2388,7 @@ export namespace Prisma {
     isDefault?: true
     createdAt?: true
     updatedAt?: true
+    isDM?: true
   }
 
   export type GroupMaxAggregateInputType = {
@@ -2393,6 +2397,7 @@ export namespace Prisma {
     isDefault?: true
     createdAt?: true
     updatedAt?: true
+    isDM?: true
   }
 
   export type GroupCountAggregateInputType = {
@@ -2401,6 +2406,7 @@ export namespace Prisma {
     isDefault?: true
     createdAt?: true
     updatedAt?: true
+    isDM?: true
     _all?: true
   }
 
@@ -2482,6 +2488,7 @@ export namespace Prisma {
     isDefault: boolean
     createdAt: Date
     updatedAt: Date
+    isDM: boolean
     _count: GroupCountAggregateOutputType | null
     _min: GroupMinAggregateOutputType | null
     _max: GroupMaxAggregateOutputType | null
@@ -2507,6 +2514,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDM?: boolean
     users?: boolean | Group$usersArgs<ExtArgs>
     messages?: boolean | Group$messagesArgs<ExtArgs>
     _count?: boolean | GroupCountOutputTypeDefaultArgs<ExtArgs>
@@ -2518,6 +2526,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDM?: boolean
   }, ExtArgs["result"]["group"]>
 
   export type GroupSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2526,6 +2535,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDM?: boolean
   }, ExtArgs["result"]["group"]>
 
   export type GroupSelectScalar = {
@@ -2534,9 +2544,10 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    isDM?: boolean
   }
 
-  export type GroupOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "isDefault" | "createdAt" | "updatedAt", ExtArgs["result"]["group"]>
+  export type GroupOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "isDefault" | "createdAt" | "updatedAt" | "isDM", ExtArgs["result"]["group"]>
   export type GroupInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     users?: boolean | Group$usersArgs<ExtArgs>
     messages?: boolean | Group$messagesArgs<ExtArgs>
@@ -2557,6 +2568,7 @@ export namespace Prisma {
       isDefault: boolean
       createdAt: Date
       updatedAt: Date
+      isDM: boolean
     }, ExtArgs["result"]["group"]>
     composites: {}
   }
@@ -2987,6 +2999,7 @@ export namespace Prisma {
     readonly isDefault: FieldRef<"Group", 'Boolean'>
     readonly createdAt: FieldRef<"Group", 'DateTime'>
     readonly updatedAt: FieldRef<"Group", 'DateTime'>
+    readonly isDM: FieldRef<"Group", 'Boolean'>
   }
     
 
@@ -4550,7 +4563,8 @@ export namespace Prisma {
     name: 'name',
     isDefault: 'isDefault',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isDM: 'isDM'
   };
 
   export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
@@ -4736,6 +4750,7 @@ export namespace Prisma {
     isDefault?: BoolFilter<"Group"> | boolean
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
+    isDM?: BoolFilter<"Group"> | boolean
     users?: UserListRelationFilter
     messages?: MessageListRelationFilter
   }
@@ -4746,6 +4761,7 @@ export namespace Prisma {
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDM?: SortOrder
     users?: UserOrderByRelationAggregateInput
     messages?: MessageOrderByRelationAggregateInput
   }
@@ -4759,6 +4775,7 @@ export namespace Prisma {
     isDefault?: BoolFilter<"Group"> | boolean
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
+    isDM?: BoolFilter<"Group"> | boolean
     users?: UserListRelationFilter
     messages?: MessageListRelationFilter
   }, "id">
@@ -4769,6 +4786,7 @@ export namespace Prisma {
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDM?: SortOrder
     _count?: GroupCountOrderByAggregateInput
     _max?: GroupMaxOrderByAggregateInput
     _min?: GroupMinOrderByAggregateInput
@@ -4783,6 +4801,7 @@ export namespace Prisma {
     isDefault?: BoolWithAggregatesFilter<"Group"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Group"> | Date | string
+    isDM?: BoolWithAggregatesFilter<"Group"> | boolean
   }
 
   export type MessageWhereInput = {
@@ -4942,6 +4961,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
     users?: UserCreateNestedManyWithoutGroupsInput
     messages?: MessageCreateNestedManyWithoutGroupInput
   }
@@ -4952,6 +4972,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
     users?: UserUncheckedCreateNestedManyWithoutGroupsInput
     messages?: MessageUncheckedCreateNestedManyWithoutGroupInput
   }
@@ -4962,6 +4983,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
     users?: UserUpdateManyWithoutGroupsNestedInput
     messages?: MessageUpdateManyWithoutGroupNestedInput
   }
@@ -4972,6 +4994,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
     users?: UserUncheckedUpdateManyWithoutGroupsNestedInput
     messages?: MessageUncheckedUpdateManyWithoutGroupNestedInput
   }
@@ -4982,6 +5005,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
   }
 
   export type GroupUpdateManyMutationInput = {
@@ -4990,6 +5014,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type GroupUncheckedUpdateManyInput = {
@@ -4998,6 +5023,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type MessageCreateInput = {
@@ -5224,6 +5250,7 @@ export namespace Prisma {
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDM?: SortOrder
   }
 
   export type GroupMaxOrderByAggregateInput = {
@@ -5232,6 +5259,7 @@ export namespace Prisma {
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDM?: SortOrder
   }
 
   export type GroupMinOrderByAggregateInput = {
@@ -5240,6 +5268,7 @@ export namespace Prisma {
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    isDM?: SortOrder
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -5716,6 +5745,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
     messages?: MessageCreateNestedManyWithoutGroupInput
   }
 
@@ -5725,6 +5755,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
     messages?: MessageUncheckedCreateNestedManyWithoutGroupInput
   }
 
@@ -5851,6 +5882,7 @@ export namespace Prisma {
     isDefault?: BoolFilter<"Group"> | boolean
     createdAt?: DateTimeFilter<"Group"> | Date | string
     updatedAt?: DateTimeFilter<"Group"> | Date | string
+    isDM?: BoolFilter<"Group"> | boolean
   }
 
   export type UserUpsertWithWhereUniqueWithoutContactOfInput = {
@@ -6027,6 +6059,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
     users?: UserCreateNestedManyWithoutGroupsInput
   }
 
@@ -6036,6 +6069,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    isDM?: boolean
     users?: UserUncheckedCreateNestedManyWithoutGroupsInput
   }
 
@@ -6100,6 +6134,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
     users?: UserUpdateManyWithoutGroupsNestedInput
   }
 
@@ -6109,6 +6144,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
     users?: UserUncheckedUpdateManyWithoutGroupsNestedInput
   }
 
@@ -6146,6 +6182,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
     messages?: MessageUpdateManyWithoutGroupNestedInput
   }
 
@@ -6155,6 +6192,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
     messages?: MessageUncheckedUpdateManyWithoutGroupNestedInput
   }
 
@@ -6164,6 +6202,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    isDM?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUpdateWithoutContactOfInput = {

@@ -41,7 +41,7 @@ model Group {
   isDefault   Boolean  @default(false) // Set to 'true' for the all-user group
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
+  isDM        Boolean  @default(false) // True if this group is a direct message between two users
   // Relationships
   users    User[]    // Members of this group
   messages Message[] // Messages sent in this group

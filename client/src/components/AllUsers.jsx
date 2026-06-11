@@ -1,9 +1,22 @@
 
 import useGetUsers from "../hooks/useGetUsers";
+import {useNavigate} from "react-router-dom";
+import ChatDashboard from "./ChatBoard";
 
 function AllUsers() {
   const { users, isLoading, error } = useGetUsers();
-  console.log("Fetched users:", users);
+  const navigate = useNavigate();
+
+  const  handleSendMessage = (user) => {
+    console.log("Initiate chat with user ID:", user);
+    navigate("/chat", { 
+        state: { 
+          recipientId: user.id,
+          recipientName: user.username
+        } 
+      });
+  };
+
   if (isLoading) return <div>Loading users...</div>;
   if (error) return <div>Error loading users: {error.message}</div>;
   return (
@@ -13,7 +26,8 @@ function AllUsers() {
         <ul>
           {users.map((user) => (
             <li key={user.id}>
-              <p>{user.username}</p>
+              <span>{user.username}</span> 
+              <button onClick={() => handleSendMessage(user)}>Chat</button>
             </li>
           ))}
         </ul>

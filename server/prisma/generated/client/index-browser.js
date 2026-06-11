@@ -136,7 +136,8 @@ exports.Prisma.GroupScalarFieldEnum = {
   name: 'name',
   isDefault: 'isDefault',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  isDM: 'isDM'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {

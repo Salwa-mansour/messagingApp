@@ -34,9 +34,9 @@ export const findDMGroup = async (userAId, userBId) => {
   });
 };
 
-export const findOrCreateDMGroup = async (userAId, userBId) => {
+export const findOrCreateDMGroup = async (userAId, userB) => {
   // 1. Look for an existing DM group that contains BOTH user IDs
-  const existingGroup = await findDMGroup(userAId, userBId);
+  const existingGroup = await findDMGroup(userAId, userB.id);
 
   if (existingGroup) {
     return existingGroup; // Found it! Return the existing group context
@@ -45,11 +45,12 @@ export const findOrCreateDMGroup = async (userAId, userBId) => {
   // 2. If not found, create a brand new DM group and link both users simultaneously
   return await prisma.group.create({
     data: {
+      name:userB.username, 
       isDM: true,
       users: {
-        create: [
-          { userId: userAId },
-          { userId: userBId }
+        connect: [
+          { id: userAId },
+          { id: userB.id }
         ]
       }
     }
@@ -58,8 +59,7 @@ export const findOrCreateDMGroup = async (userAId, userBId) => {
 export const getUserGroups = async (userId) => {
   if (!userId) return [];
 
-  console.log(`Executing targeted database query for user: ${userId}`);
-
+ 
   return await prisma.group.findMany({
     where: {
       users: {

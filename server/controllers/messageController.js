@@ -47,7 +47,7 @@ export const sendMessage = async (req, res) => {
       }
 
       // Run your Find-or-Create direct conversation sequence
-      const dmGroup = await groupService.findOrCreateDMGroup(senderId, targetId);
+      const dmGroup = await groupService.findOrCreateDMGroup(senderId, recipientUser);
       targetGroupId = dmGroup.id;
     }
 
