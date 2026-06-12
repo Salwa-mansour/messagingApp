@@ -4,6 +4,25 @@ import prisma from '../data/connection.js';
  * Finds an existing DM group between two specific users, 
  * or creates a brand new one if it doesn't exist.
  */
+export const createGroup = async (name, memberIds) => {
+  return await prisma.group.create({
+    data: {
+      name, 
+      users: {
+        connect: memberIds.map(id => ({ id })) // Connects all user IDs in one go
+      }
+    },
+    include: {
+      users: {
+        select: {
+          id: true,
+          username: true
+        }
+      }
+    }
+  });
+};
+
 export const getGroupById = async (groupId) => {
   return await prisma.group.findUnique({
     where: { id: groupId },

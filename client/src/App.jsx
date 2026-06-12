@@ -7,6 +7,7 @@ import PersistLogin from "./components/PersistLogin";
 import ChatDashboard from "./components/ChatBoard";
 import AllUsers from "./components/AllUsers";
 import Contacts from "./components/Contacts";
+import CreateGroup from "./components/CreateGroup";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
               <Route path="chat" element={<ChatDashboard />} />
               <Route path="users" element={<AllUsers />} />
               <Route path="contacts" element={<Contacts />} />
+              <Route path="creategroup" element={<CreateGroup />} />
           </Route>
         </Route>
         {/* Fallbacks & Redirects */}

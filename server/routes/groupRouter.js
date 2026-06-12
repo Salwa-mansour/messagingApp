@@ -5,5 +5,6 @@ import { authenticateToken } from '../middleware/authMiddleware.js'; // <-- Impo
 const router = Router();
 
 router.get('/user-groups', authenticateToken, groupController.getUserGroups);
+router.post('/create', authenticateToken, groupController.createGroup);
 
 export default router;

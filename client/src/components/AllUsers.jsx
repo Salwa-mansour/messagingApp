@@ -1,6 +1,6 @@
 
 import useGetUsers from "../hooks/useGetUsers";
-import {useNavigate} from "react-router-dom";
+import {useNavigate ,Link} from "react-router-dom";
 import ChatDashboard from "./ChatBoard";
 
 function AllUsers() {
@@ -22,6 +22,9 @@ function AllUsers() {
   return (
     <div>
       <h1>all users</h1>
+      <button>
+        <Link to="/creategroup">create group</Link>
+      </button>
       {users.length > 0 ? (
         <ul>
           {users.map((user) => (
