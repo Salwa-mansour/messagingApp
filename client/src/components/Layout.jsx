@@ -2,10 +2,15 @@ import { Outlet } from "react-router-dom";
 import Nav from "./Nav";
 const Layout = () => {
   return (
-    <main className="App">
+   <>
       <Nav />
-      <Outlet />
-    </main>
+      <main>
+         <Outlet />
+      </main>
+      <footer>
+         <p>&copy; 2024 Messaging App. All rights reserved.</p>
+      </footer>
+  </>
   );
 };
 

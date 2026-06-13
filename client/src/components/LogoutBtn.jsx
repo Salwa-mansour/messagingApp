@@ -31,7 +31,7 @@ function LogoutBtn() {
 
     
   return (
-  <form onSubmit={handleLogout}>
+  <form onSubmit={handleLogout} className="logout-form">
     <button type="submit" className="logout-btn" disabled={isLogingOut}>
       {isLogingOut ? "Logging out..." : "Logout"}
     </button>

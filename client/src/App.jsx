@@ -6,7 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PersistLogin from "./components/PersistLogin";
 import ChatDashboard from "./components/ChatBoard";
 import AllUsers from "./components/AllUsers";
-import Contacts from "./components/Contacts";
+
 import CreateGroup from "./components/CreateGroup";
 
 
@@ -14,18 +14,19 @@ function App() {
   return (
     <Routes>
       {/* Root Layout wrapper containing shared structures (like toast notifications or universal wrappers) */}
-      <Route path="/" element={<Layout />}>
-        
-        {/* Public Authentication Routes */}
+     {/* Public Authentication Routes */}
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
 
+      <Route path="/" element={<Layout />}>
+        
+      
         {/* Protected Application Routes */}
         <Route element={<PersistLogin />}>
           <Route element={<ProtectedRoute />}>
               <Route path="chat" element={<ChatDashboard />} />
               <Route path="users" element={<AllUsers />} />
-              <Route path="contacts" element={<Contacts />} />
+            
               <Route path="creategroup" element={<CreateGroup />} />
           </Route>
         </Route>

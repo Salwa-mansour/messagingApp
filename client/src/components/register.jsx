@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faInfoCircle, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { AuthContext } from "../context/AuthContext";
 import axios from "../api/axios";
+import useInput from "../hooks/useInput";
 import "../css/auth.css";
 import "../css/form.css";
 
@@ -23,15 +24,16 @@ const Register = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [username, setUsername] = useState("");
+
+  const [username, resetUsername, usernameAttribs] = useInput("username", ""); 
   const [validName, setValidName] = useState(false);
   const [userFocus, setUserFocus] = useState(false);
 
-  const [email, setEmail] = useState("");
+  const [email, resetEmail, emailAttribs] = useInput("email", ""); 
   const [validEmail, setValidEmail] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
 
-  const [password, setPassword] = useState("");
+  const [password, resetPassword, passwordAttribs] = useInput("password", ""); 
   const [validPassword, setValidPassword] = useState(false);
   const [passwordFocus, setPasswordFocus] = useState(false);
 
@@ -108,9 +110,9 @@ const Register = () => {
       setSuccess(true);
       
       // Flush inputs out of local memory safely
-      setUsername("");
-      setEmail("");
-      setPassword("");
+      resetUsername("");
+      resetEmail("");
+      resetPassword("");
       setConfirmPassword("");
 
       // Direct the user forward automatically into the core route layout
@@ -182,8 +184,7 @@ const Register = () => {
                   id="username"
                   ref={usernameRef}
                   autoComplete="off"
-                  onChange={(e) => setUsername(e.target.value)}
-                  value={username}
+                {...usernameAttribs}
                   required
                   aria-invalid={validName ? "false" : "true"}
                   aria-describedby="uidnote"
@@ -213,8 +214,7 @@ const Register = () => {
                   type="email"
                   id="email"
                   autoComplete="email"
-                  onChange={(e) => setEmail(e.target.value)}
-                  value={email}
+                {...emailAttribs}
                   required
                   aria-invalid={validEmail ? "false" : "true"}
                   aria-describedby="emailnote"
@@ -243,8 +243,7 @@ const Register = () => {
                   <input
                     type={showPwd ? "text" : "password"}
                     id="password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
+                  {...passwordAttribs}
                     required
                     aria-invalid={validPassword ? "false" : "true"}
                     aria-describedby="pwdnote"

@@ -2,18 +2,63 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    outline:1px solid red;
+}
+ul{
+  list-style: none;
 }
 #root{
-    background-color:#f3f4f6;
+    width: min(100vw, 800px);
+    margin: 0 auto;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+   
 }
+main{
+  flex:1;
+  min-height: 0;/* prevent expand with content */
+}
+main > div{
+  height: 100%; 
+}
+/* nav */
 
-
+.title{
+  text-align: center;
+}
+.nav-links{
+  display: flex;
+  gap:0.5rem;
+}
+.nav-links a{
+  padding: 0.5rem;
+  margin-inline: .25rem;
+}
+.logout-form{
+  display:contents
+}
+.nav-buttons {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 0.5rem;
+}
+.users-list{
+  padding-inline:1rem
+}
+.users-list li{
+  padding:0.5rem;
+  border-bottom:1px solid rgb(158, 158, 158);
+ 
+}
+.users-list li button{
+  display:inline-block;
+  margin-inline-start: auto;
+}
 /* chat page styleins */
 
 .chat-dashboard{
-    width:min(100vw, 800px);
-    height:100vh;   
-    margin:0 auto;
+   width:100%;
    
     display: grid;
     grid-template-columns: 1fr;
@@ -26,10 +71,34 @@
     grid-column: 1;
     grid-row: 1;
     border:1px solid rgb(158, 158, 158);
+    overflow-y: auto;
 
 }
+
 .chat-list{
       background-color:rgba(245, 147, 123, 0.451);
+}
+.messages{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.message{
+  padding:0.5rem;
+  margin:0.25rem;
+  border-radius: 0.5rem;
+  max-width: 70%;
+}
+.message.sent{
+  background-color: yellow;
+  align-self: flex-start;
+}
+.message.sent .owner,
+.direct-msg .owner{
+  display: none;
+}
+.message.received{
+  background-color: white;
 }
 @media (min-width: 769px) {
   .chat-dashboard {

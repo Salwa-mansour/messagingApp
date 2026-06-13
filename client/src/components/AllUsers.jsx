@@ -20,13 +20,11 @@ function AllUsers() {
   if (isLoading) return <div>Loading users...</div>;
   if (error) return <div>Error loading users: {error.message}</div>;
   return (
-    <div>
-      <h1>all users</h1>
-      <button>
-        <Link to="/creategroup">create group</Link>
-      </button>
+    <>
+      <h1 className="title">all users</h1>
+    
       {users.length > 0 ? (
-        <ul>
+        <ul className="users-list">
           {users.map((user) => (
             <li key={user.id}>
               <span>{user.username}</span> 
@@ -37,7 +35,7 @@ function AllUsers() {
       ) : (
         <p>No users found.</p>
       )}
-    </div>
+    </>
 
     
   )
