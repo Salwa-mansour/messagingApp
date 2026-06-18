@@ -1,8 +1,7 @@
 import { useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useInput from "../hooks/useInput"; 
 
-const MessageForm = ({ currentRoom, pendingDM, onMessageSent, onGroupCreated }) => {
+const MessageForm = ({ currentRoom, pendingDM, onGroupCreated }) => { // 💡 Removed onMessageSent prop
   const [text, setText] = useState("");
   const axiosPrivate = useAxiosPrivate();
 
@@ -12,24 +11,23 @@ const MessageForm = ({ currentRoom, pendingDM, onMessageSent, onGroupCreated }) 
     if (!currentRoom && !pendingDM) return;
 
     try {
-      // Determine endpoint depending on channel context state
-      const endpoint = currentRoom 
-        ? `/message/send/${currentRoom}` 
-        : `/message/send/${pendingDM.id}`;
+      const endpoint = currentRoom?.id
+        ? `/message/send/${currentRoom?.id}` 
+        : `/message/send/${pendingDM?.id}`;
 
+      // 1. Send the text to the backend database
       const response = await axiosPrivate.post(endpoint, {
         content: text
       });
 
-      // Extract standard database object variations securely
-      const savedMessage = response.data?.data || response.data;
       const newlyCreatedGroupId = response.data?.groupId;
 
-      // Pass the new message payload back up to parent message timeline state array
-      onMessageSent(savedMessage);
-      setText(""); // Instant clean reset of form layout box
+      // 💡 2. Just clear the input box! 
+      // Your ChatDashboard socket listener will automatically catch the server broadcast 
+      // and display the message on your screen instantly.
+      setText(""); 
 
-      // If backend reports a new group created, run top-level layout transformation cascade
+      // 3. If a brand new DM room was created, handle the layout switch
       if (newlyCreatedGroupId && !currentRoom) {
         onGroupCreated(newlyCreatedGroupId);
       }
@@ -38,7 +36,6 @@ const MessageForm = ({ currentRoom, pendingDM, onMessageSent, onGroupCreated }) 
     }
   };
 
-  // Keep input fields disabled if there is absolutely no room or context target active
   const isInputDisabled = !currentRoom && !pendingDM;
 
   return (

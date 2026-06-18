@@ -53,6 +53,13 @@ export const sendMessage = async (req, res) => {
 
     // Save the message
     const newMessage = await messageService.createMessage(content, senderId, targetGroupId);
+    //  Grab the WebSocket server instance
+    const io = req.app.get("io");
+
+    //  Real-time Broadcast: Push to everyone listening in this specific chat channel room
+    if (io) {
+      io.to(targetGroupId).emit("receive_message", newMessage);
+    }
 
     return res.status(201).json({
       message: 'Message sent successfully!',

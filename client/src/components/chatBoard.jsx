@@ -1,32 +1,29 @@
 import { useContext, useState, useEffect } from "react"; 
 import { AuthContext } from "../context/AuthContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import  useSocketConnection  from "../hooks/useSocketConnection"; // Ensure named export matches hook
 import { useNavigate, useLocation } from "react-router-dom";
 import MessageForm from "./MessageForm";
 import "../css/index.css";
+// 💡 NOTE: Removd the macro import line if you aren't rendering icons inline right here to keep standard builds light
 
 const ChatDashboard = () => {
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  const socket = useSocketConnection();
   const { auth } = useContext(AuthContext);
 
   const [chatRooms, setChatRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(true); 
-  
-  // 💡 currentRoom will now cleanly hold the entire room object or null
   const [currentRoom, setCurrentRoom] = useState(null);
   const [messages, setMessages] = useState([]); 
-
   const [pendingDM, setPendingDM] = useState(null);
 
-  // Helper to re-fetch the room listings for the left side panel
   const refreshChatRoomsList = async () => {
     try {
       const response = await axiosPrivate.get("/group/user-groups");
       setChatRooms(response.data);
-      
-      // 💡 If we just created a group, update currentRoom state with its full fresh object
       if (currentRoom && !currentRoom.name) {
         const matchingRoom = response.data.find(r => r.id === currentRoom.id);
         if (matchingRoom) setCurrentRoom(matchingRoom);
@@ -45,7 +42,6 @@ const ChatDashboard = () => {
         const response = await axiosPrivate.get("/group/user-groups");
         if (isMounted) {
           setChatRooms(response.data);
-          console.log("Fetched chat rooms:", response.data);
         }
       } catch (err) {
         console.error("Failed to fetch chat rooms:", err);
@@ -61,7 +57,6 @@ const ChatDashboard = () => {
     } else {
       setIsLoading(false);
     }
-
     return () => { isMounted = false; };
   }, [axiosPrivate, auth?.token]);
 
@@ -74,36 +69,49 @@ const ChatDashboard = () => {
       });
       setCurrentRoom(null);
       setMessages([]);
-
       window.history.replaceState({}, document.title);
     }
   }, [location.state]);
 
-  // 3. Fetch Messages for Selected Room
+  //  Fetch Historical Messages VIA HTTP AND Initialize Real-Time Sockets Together
   useEffect(() => {
+    if (!currentRoom?.id) return;
     let isMounted = true;
-    const fetchMessages = async () => {
-      // 💡 FIX: Use optional chaining to check for the ID safely
-      if (!currentRoom?.id) return;
+
+    const fetchMessageHistory = async () => {
       try {
         const response = await axiosPrivate.get(`/message/${currentRoom.id}`);
         if (isMounted) {
           const history = Array.isArray(response.data) ? response.data : response.data.messages || [];
-          setMessages(history);
+              // 💡 FIX: Prevent overwriting real-time messages that dropped in while this was loading
+            setMessages(history);
         }
       } catch (err) {
-        console.error("Failed to fetch messages:", err);
+        console.error("Failed to fetch historical database logs:", err);
       }
     };
 
-    if (currentRoom) {
-      fetchMessages();
-      setPendingDM(null); 
+    // Execute the database retrieval
+    fetchMessageHistory();
+
+    // Setup WebSocket pipeline if socket is initialized and ready
+    if (socket) {
+      socket.emit("join_room", currentRoom.id);
+
+      socket.on("receive_message", (incomingMsg) => {
+        if (isMounted) {
+       setMessages((prev) => [...prev, incomingMsg]);
+        }
+      });
     }
 
-    return () => { isMounted = false; };
-  // 💡 Depend on currentRoom?.id so the effect triggers cleanly when the selected target transitions
-  }, [currentRoom?.id, axiosPrivate]);
+    return () => { 
+      isMounted = false; 
+      if (socket) {
+        socket.off("receive_message");
+      }
+    };
+  }, [currentRoom?.id, socket, axiosPrivate]);
 
   if (isLoading) {
     return (
@@ -113,10 +121,8 @@ const ChatDashboard = () => {
     );
   }
 
-  // Dynamic window layout title text generator
   const getActiveChatName = () => {
     if (currentRoom) {
-      // 💡 FIX: Read the name directly from the object if it exists, otherwise fall back to list search
       if (currentRoom.name) return currentRoom.name;
       const current = chatRooms.find(r => r.id === currentRoom.id);
       return current ? current.name : "Active Chat Channel";
@@ -128,68 +134,62 @@ const ChatDashboard = () => {
   };
 
   return (
-    <>
-      <div className="chat-dashboard">
-        {/* Left Side Panel: Chat Rooms */}
-        <aside className="chat-list">
-           <ul>
-            {chatRooms.length > 0 ? (
-              chatRooms.map((room) => (
-                <li 
-                  key={room.id} 
-                  // 💡 FIX: Added optional chaining here so it doesn't break when currentRoom is null
-                  className={`chat-room ${currentRoom?.id === room.id ? "active-room" : ""}`} 
-                  onClick={() => setCurrentRoom(room)} // Storing whole object
-                >
-                  <h3>{room?.name}</h3>
-                </li>
+    <div className="chat-dashboard">
+      {/* Left Side Panel: Chat Rooms */}
+      <aside className="chat-list">
+         <ul>
+          {chatRooms.length > 0 ? (
+            chatRooms.map((room) => (
+              <li 
+                key={room.id} 
+                className={`chat-room ${currentRoom?.id === room.id ? "active-room" : ""}`} 
+                onClick={() => setCurrentRoom(room)} 
+              >
+                <h3>{room?.name}</h3>
+              </li>
+            ))
+          ) : (
+            <p>No chat rooms available.</p>
+          )}
+        </ul>
+      </aside>
+      
+      {/* Right Side Panel: Active Chat View */}
+      <section className={`chat-window ${currentRoom?.isDM ? "direct-msg" : "chat-group"}`}>
+        <header className="chat-header-pane">
+          <h2>{getActiveChatName()}</h2>
+        </header>
+
+        <div className="messages">
+          {(currentRoom || pendingDM) ? (
+            messages.length > 0 ? (
+              messages.map((msg) => (
+                <div key={msg.id || Math.random()} className={`message ${msg.senderId === auth?.user?.id ? "sent" : "received"}`}>  
+                  <p>
+                    <strong className="owner">{msg.sender?.username || msg.senderId || "User"}:</strong> {msg.content}
+                  </p>
+                </div>
               ))
             ) : (
-              <p>No chat rooms available.</p>
-            )}
-          </ul>
-        </aside>
+              <p>No messages in this room yet. Send a message to start conversing!</p>
+            )
+          ) : (
+            <p>Select a chat room to view messages.</p>
+          )}
+        </div>
+
+        <MessageForm 
+          currentRoom={currentRoom}
+          pendingDM={pendingDM}
         
-        {/* Right Side Panel: Active Chat View */}
-        <section className={`chat-window ${currentRoom?.isDM ? "direct-msg":"chat-group"}`}>
-          <header className="chat-header-pane">
-            <h2>{getActiveChatName()}</h2>
-          </header>
-
-          <div className="messages">
-            {(currentRoom || pendingDM) ? (
-              messages.length > 0 ? (
-                messages.map((msg) => (
-                  <div key={msg.id || Math.random()} className={`message ${msg.senderId === auth?.user?.id ? "sent" : "received"}`}>  
-                    <p>
-                      <strong className="owner">{msg.sender?.username || msg.senderId || "User"}:</strong> {msg.content}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <p>No messages in this room yet. Send a message to start conversing!</p>
-              )
-            ) : (
-              <p>Select a chat room to view messages.</p>
-            )}
-          </div>
-
-          {/* Form Processing Footer with Dynamic Props */}
-          <MessageForm 
-            currentRoom={currentRoom}
-            pendingDM={pendingDM}
-            onMessageSent={(newMsg) => setMessages((prev) => [...prev, newMsg])}
-            // 💡 Hand back a small structural object context here so it satisfies your object state requirement
-            onGroupCreated={(newGroupId) => {
-              setCurrentRoom({ id: newGroupId });
-              setPendingDM(null);
-              refreshChatRoomsList(); 
-            }}
-          />
-
-        </section>
-      </div>
-    </>
+          onGroupCreated={(newGroupId) => {
+            setCurrentRoom({ id: newGroupId });
+            setPendingDM(null);
+            refreshChatRoomsList(); 
+          }}
+        />
+      </section>
+    </div>
   );
 };
 
