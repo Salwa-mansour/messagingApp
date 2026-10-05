@@ -1,7 +1,7 @@
 
 import useGetUsers from "../hooks/useGetUsers";
 import {useNavigate ,Link} from "react-router-dom";
-import ChatDashboard from "./ChatBoard";
+// import ChatDashboard from "./ChatBoard";
 
 function AllUsers() {
   const { users, isLoading, error } = useGetUsers();

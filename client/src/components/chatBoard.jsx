@@ -19,6 +19,7 @@ const ChatDashboard = () => {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [messages, setMessages] = useState([]); 
   const [pendingDM, setPendingDM] = useState(null);
+  const [showChatWindow, setShowChatWindow] = useState(false);
 
   const refreshChatRoomsList = async () => {
     try {
@@ -35,6 +36,7 @@ const ChatDashboard = () => {
 
   // 1. Fetch Chat Rooms on Mount
   useEffect(() => {
+    console.log('current froom',currentRoom);
     let isMounted = true;
     const fetchChatRooms = async () => {
       try {
@@ -143,7 +145,7 @@ const ChatDashboard = () => {
               <li 
                 key={room.id} 
                 className={`chat-room ${currentRoom?.id === room.id ? "active-room" : ""}`} 
-                onClick={() => setCurrentRoom(room)} 
+                onClick={() => {setCurrentRoom(room); setShowChatWindow(true); }} 
               >
                 <h3>{room?.name}</h3>
               </li>
@@ -153,11 +155,15 @@ const ChatDashboard = () => {
           )}
         </ul>
       </aside>
-      
+   
       {/* Right Side Panel: Active Chat View */}
-      <section className={`chat-window ${currentRoom?.isDM ? "direct-msg" : "chat-group"}`}>
+      <section className={`chat-window ${showChatWindow ? "active" : ""}
+       ${currentRoom?.isDM ? " direct-msg" : " chat-group"}`}>
         <header className="chat-header-pane">
           <h2>{getActiveChatName()}</h2>
+          <button onClick={() => {setCurrentRoom(null); setPendingDM(null); setMessages([]); setShowChatWindow(false); }}
+          className="close-chat-btn"
+            >X</button>
         </header>
 
         <div className="messages">
@@ -178,7 +184,7 @@ const ChatDashboard = () => {
           )}
         </div>
 
-        <MessageForm 
+       <MessageForm 
           currentRoom={currentRoom}
           pendingDM={pendingDM}
         
@@ -189,6 +195,7 @@ const ChatDashboard = () => {
           }}
         />
       </section>
+       
     </div>
   );
 };

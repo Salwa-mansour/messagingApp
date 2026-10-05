@@ -8,12 +8,11 @@ ul{
   list-style: none;
 }
 #root{
-    width: min(100vw, 800px);
-    margin: 0 auto;
-    display: flex;
-    height: 100vh;
-    flex-direction: column;
    
+   display: flex;
+   flex-direction: column;
+    height: 100dvh;
+  
 }
 main{
   flex:1;
@@ -64,24 +63,38 @@ main > div{
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
 }
+.chat-window{
+  display: flex;
+  flex-direction: column;
+}
 .chat-list,
 .chat-window{
-     background-color:rgba(0, 128, 0, 0.451);
-    padding:1rem;
+     background-color:rgba(0, 128, 0);
+    
     grid-column: 1;
     grid-row: 1;
     border:1px solid rgb(158, 158, 158);
     overflow-y: auto;
-
+    transition: opacity 0.3s ease-in-out;
 }
-
+.chat-window{
+  opacity:0;
+  pointer-events: none;
+}
+.chat-window.active{
+  opacity:1;
+  pointer-events: auto;
+}
 .chat-list{
-      background-color:rgba(245, 147, 123, 0.451);
+      background-color:rgba(245, 147, 123);
 }
 .messages{
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  min-height: 0;
+    flex: 1;
+    overflow: auto;
 }
 .message{
   padding:0.5rem;
@@ -113,6 +126,13 @@ main > div{
   .chat-window {
     grid-column: 2;
   }
+  .chat-window{
+  opacity:1;
+  pointer-events: auto;
+}
+.close-chat-btn{
+  display: none;
+}
 }
 .active-room{
     background-color:rgba(43, 48, 43, 0.451);

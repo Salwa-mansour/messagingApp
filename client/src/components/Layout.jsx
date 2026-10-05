@@ -3,13 +3,14 @@ import Nav from "./Nav";
 const Layout = () => {
   return (
    <>
-      <Nav />
+      <h1 className="title">Chat App</h1>
       <main>
          <Outlet />
       </main>
-      <footer>
+       <Nav />
+      {/* <footer>
          <p>&copy; 2024 Messaging App. All rights reserved.</p>
-      </footer>
+      </footer> */}
   </>
   );
 };

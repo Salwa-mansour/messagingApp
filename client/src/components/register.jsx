@@ -139,7 +139,7 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-container">
+    <main className="auth-container">
       <div className="auth-card" role="main">
         {success ? (
           <section className="auth-success-view">
@@ -315,7 +315,7 @@ const Register = () => {
           </section>
         )}
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -90,7 +90,7 @@ const Login = () => {
   };
 
   return (
-    <div className="auth-container">
+    <main className="auth-container">
       <div className="auth-card" role="main">
         
         {/* Dynamic Screen Reader Friendly Alert Banner */}
@@ -174,7 +174,7 @@ const Login = () => {
           Need an account? <Link to="/register" className="toggle-link">Register here</Link>
         </p>
       </div>
-    </div>
+    </main>
   );
 };
 
