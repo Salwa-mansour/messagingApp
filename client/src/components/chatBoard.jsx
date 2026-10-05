@@ -1,9 +1,11 @@
-import { useContext, useState, useEffect } from "react"; 
+import { useContext, useState, useEffect,useRef } from "react"; 
 import { AuthContext } from "../context/AuthContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import  useSocketConnection  from "../hooks/useSocketConnection"; // Ensure named export matches hook
 import { useNavigate, useLocation } from "react-router-dom";
 import MessageForm from "./MessageForm";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import "../css/index.css";
 // 💡 NOTE: Removd the macro import line if you aren't rendering icons inline right here to keep standard builds light
 
@@ -20,6 +22,16 @@ const ChatDashboard = () => {
   const [messages, setMessages] = useState([]); 
   const [pendingDM, setPendingDM] = useState(null);
   const [showChatWindow, setShowChatWindow] = useState(false);
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // 💡 4. Trigger auto-scroll every time the messages array updates
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const refreshChatRoomsList = async () => {
     try {
@@ -160,10 +172,13 @@ const ChatDashboard = () => {
       <section className={`chat-window ${showChatWindow ? "active" : ""}
        ${currentRoom?.isDM ? " direct-msg" : " chat-group"}`}>
         <header className="chat-header-pane">
-          <h2>{getActiveChatName()}</h2>
-          <button onClick={() => {setCurrentRoom(null); setPendingDM(null); setMessages([]); setShowChatWindow(false); }}
+           <button onClick={() => {setCurrentRoom(null); setPendingDM(null); setMessages([]); setShowChatWindow(false); }}
           className="close-chat-btn"
-            >X</button>
+            >
+            <FontAwesomeIcon icon={faArrowLeft} />
+            </button>
+          <h2>{getActiveChatName()}</h2>
+         
         </header>
 
         <div className="messages">
@@ -182,8 +197,10 @@ const ChatDashboard = () => {
           ) : (
             <p>Select a chat room to view messages.</p>
           )}
-        </div>
 
+           <div ref={messagesEndRef} />
+        </div>
+         
        <MessageForm 
           currentRoom={currentRoom}
           pendingDM={pendingDM}
