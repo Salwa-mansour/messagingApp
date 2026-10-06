@@ -17,7 +17,10 @@ const app = express();
 app.use(cookieParser()); 
 app.use(express.json());
 
-const allowedOrigins = ['http://localhost:5173'];
+const allowedOrigins = process.env.NODE_ENV === 'production'
+    ? [process.env.PRODUCTION_CLIENT]
+    : [process.env.DEVELOPMENT_CLIENT];
+
 const corsOptions = {
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.indexOf(origin) !== -1) {
