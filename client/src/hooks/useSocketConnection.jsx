@@ -10,7 +10,7 @@ const useSocketConnection = () => {
     if (!auth?.token) return;
 
     // Initialize connection with handshake configurations
-    const newSocket = io("http://localhost:3000", {
+    const newSocket = io(import.meta.env.VITE_SOCKET_URL, {
       auth: {
         token: auth.token
       }

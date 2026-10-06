@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '../.env' }); // Adjust if your .env is elsewhere
+
 import prisma from '../data/connection.js';
 import bcrypt from 'bcryptjs';
 
