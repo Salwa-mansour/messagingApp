@@ -189,6 +189,40 @@ li.chat-room{
   background-color: var(--secondary-background-color);
   color: var(--main-text-color);
 }
+/* users list */
+.users-list{
+  max-width: 500px;
+  margin: auto;
+}
+.users-list li{
+  padding:var(--main-padding);
+  display: flex;
+  justify-content: space-between;
+}
+.create-group-container{
+  max-width: 500px;
+  padding: var(--main-padding);
+  margin: auto;
+      min-height: 0;
+    overflow: auto;
+}
+.create-group-form {
+  padding: 1rem;
+  
+}
+.create-group-form input[type="text"]{
+  padding: 1rem;
+  margin: 1rem;
+  outline: none;
+  border: none;
+  background-color: var(--secondary-background-color);
+  border-radius: 6px;
+
+}
+.checkbox-user-list li{
+  padding: 1rem;
+  border-bottom: 2px solid var(--secondary-background-color);
+}
 @media (max-width: 460px) {
   /* mobile nav */
   .nav-link{

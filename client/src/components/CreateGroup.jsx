@@ -62,7 +62,7 @@ const CreateGroup = ({ onGroupCreated, onCancel }) => {
   return (
     <div className="create-group-container">
       <h2>Create New Group Channel</h2>
-      <form onSubmit={handleSubmit}>
+      <form className="create-group-form" onSubmit={handleSubmit}>
         <div className="form-control">
           <label htmlFor="groupName">Group Name</label>
           <input

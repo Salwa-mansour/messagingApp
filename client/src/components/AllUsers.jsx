@@ -1,6 +1,8 @@
 
 import useGetUsers from "../hooks/useGetUsers";
 import {useNavigate ,Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMessage} from "@fortawesome/free-solid-svg-icons";
 // import ChatDashboard from "./ChatBoard";
 
 function AllUsers() {
@@ -28,7 +30,10 @@ function AllUsers() {
           {users.map((user) => (
             <li key={user.id}>
               <span>{user.username}</span> 
-              <button onClick={() => handleSendMessage(user)}>Chat</button>
+              <button onClick={() => handleSendMessage(user)}>
+                <FontAwesomeIcon icon={faMessage} />
+               <span>Chat</span>  
+                </button>
             </li>
           ))}
         </ul>
