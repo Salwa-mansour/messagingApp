@@ -48,7 +48,7 @@ const ChatDashboard = () => {
 
   // 1. Fetch Chat Rooms on Mount
   useEffect(() => {
-    console.log('current froom',currentRoom);
+  
     let isMounted = true;
     const fetchChatRooms = async () => {
       try {
@@ -75,23 +75,41 @@ const ChatDashboard = () => {
   }, [axiosPrivate, auth?.token]);
 
   // 2. Intercept Router Redirection Context from AllUsers
-  useEffect(() => {
+useEffect(() => {
     if (location.state?.recipientId) {
-      setPendingDM({
-        id: location.state.recipientId,
-        username: location.state.recipientName
-      });
-      setCurrentRoom(null);
-      setMessages([]);
+      const recipientId = location.state.recipientId;
+      const recipientName = location.state.recipientName;
+
+      // 1. Search if a DM room already exists with this user
+      const existingRoom = chatRooms.find(room => 
+        room.isDM && 
+        room.users.some(user => user.id === recipientId)
+      );
+      setShowChatWindow(true)
+      if (existingRoom) {
+        // 2. If it exists, set it as the current room instead of an empty one
+        setCurrentRoom(existingRoom);
+        setPendingDM(null);
+        // fetchMessagesForRoom(existingRoom.id); // Uncomment if you fetch messages here
+      } else {
+        // 3. Otherwise, fall back to the empty pending state
+        setPendingDM({
+          id: recipientId,
+          username: recipientName
+        });
+        setCurrentRoom(null);
+        setMessages([]);
+      }
+
+      // Clear the router state so it doesn't re-trigger on refresh
       window.history.replaceState({}, document.title);
     }
-  }, [location.state]);
-
+  }, [location.state, chatRooms]);
   //  Fetch Historical Messages VIA HTTP AND Initialize Real-Time Sockets Together
   useEffect(() => {
     if (!currentRoom?.id) return;
     let isMounted = true;
-
+console.log(currentRoom)
     const fetchMessageHistory = async () => {
       try {
         const response = await axiosPrivate.get(`/message/${currentRoom.id}`);

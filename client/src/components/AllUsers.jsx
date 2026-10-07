@@ -10,7 +10,7 @@ function AllUsers() {
   const navigate = useNavigate();
 
   const  handleSendMessage = (user) => {
-    console.log("Initiate chat with user ID:", user);
+    
     navigate("/chat", { 
         state: { 
           recipientId: user.id,

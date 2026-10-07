@@ -7,9 +7,9 @@ import ws from 'ws';
 let prisma;
 
 // Check if we are in production (or if you prefer checking a specific env variable like process.env.USE_NEON === 'true')
-const isProduction = process.env.NODE_ENV === 'production' || process.env.DATABASE_URL?.includes('neon.tech');
+const useNeonAdapter =  process.env.DATABASE_URL?.includes('neon.tech');
 
-if (isProduction) {
+if (useNeonAdapter) {
   // --- PRODUCTION SETUP (Neon) ---
   const { PrismaNeon } = await import('@prisma/adapter-neon');
   const { Pool, neonConfig } = await import('@neondatabase/serverless');

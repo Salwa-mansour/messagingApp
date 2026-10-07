@@ -69,12 +69,13 @@ const CreateGroup = ({ onGroupCreated, onCancel }) => {
             type="text"
             id="groupName"
             value={groupName}
+            placeholder="group name"
             onChange={(e) => setGroupName(e.target.value)}
             disabled={isSubmitting}
           />
         </div>
 
-        <div className="form-control">
+        <div className="form-control user-check">
           <label>Select Members (Select at least 2)</label>
           <ul className="checkbox-user-list">
             {users.map((user) => (
