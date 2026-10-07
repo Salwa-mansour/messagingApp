@@ -58,7 +58,7 @@ export const loginUser = async (req, res) => {
 export const registerUser = async (req, res) => {
 
   const { username, email, password, confirmPassword } = req.body;
-
+ 
   // 2. Add it to your initial empty field check
   if (!username || !email || !password || !confirmPassword) {
     return res.status(400).json({ message: 'All fields are required.' });
@@ -72,6 +72,7 @@ export const registerUser = async (req, res) => {
   try {
     // 4. Check if user already exists
     const existingUser = await authService.findUserByEmailOrUsername(email, username);
+    
     if (existingUser) {
       return res.status(409).json({ message: 'Username or Email is already taken.' });
     }

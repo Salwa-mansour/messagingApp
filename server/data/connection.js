@@ -16,19 +16,21 @@ if (!connectionString) {
 let prisma;
 
 const isProduction = process.env.NODE_ENV === 'production' || connectionString.includes('neon.tech');
+// Clean the connection string for the Neon serverless WebSocket driver
+let cleanedConnectionString = connectionString;
 
 if (isProduction) {
   const { PrismaNeon } = await import('@prisma/adapter-neon');
-  const { Pool, neonConfig } = await import('@neondatabase/serverless');
+  const { neonConfig } = await import('@neondatabase/serverless');
 
   neonConfig.webSocketConstructor = ws;
 
-  const pool = new Pool({ connectionString });
-  const adapter = new PrismaNeon(pool);
+  // Pass the connection string object directly to PrismaNeon
+  const adapter = new PrismaNeon({ connectionString });
   prisma = new PrismaClient({ adapter });
   console.log('🔌 Connected using Neon Adapter (Production)');
-
 } else {
+  // Local environment can keep standard parameters if needed, or use cleaned string
   const { PrismaPg } = await import('@prisma/adapter-pg');
   const pkg = await import('pg');
   const { Pool } = pkg;
@@ -38,5 +40,4 @@ if (isProduction) {
   prisma = new PrismaClient({ adapter });
   console.log('💻 Connected using Standard PG Adapter (Local)');
 }
-
 export default prisma;

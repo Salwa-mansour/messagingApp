@@ -4,14 +4,20 @@ import prisma from '../data/connection.js';
  * Finds a user by their email or username
  */
 export const findUserByEmailOrUsername = async (email, username) => {
-  return await prisma.user.findFirst({
-    where: {
-      OR: [
-        { email: email },
-        { username: username }
-      ]
-    }
-  });
+  try {
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: email },
+          { username: username }
+        ]
+      }
+    });
+    return user;
+  } catch (error) {
+    console.error("❌ Database query error in findUserByEmailOrUsername:", error);
+    throw error;
+  }
 };
 
 /**
