@@ -15,7 +15,7 @@ if (!connectionString) {
 
 let prisma;
 
-const isProduction = process.env.NODE_ENV === 'production' || connectionString.includes('neon.tech');
+const isProduction =  connectionString.includes('neon.tech');
 // Clean the connection string for the Neon serverless WebSocket driver
 let cleanedConnectionString = connectionString;
 
