@@ -4,37 +4,36 @@ dotenv.config();
 import { PrismaClient } from '../prisma/generated/client/index.js';
 import ws from 'ws';
 
+// Debug check to verify what Render is passing at runtime
+console.log("DATABASE_URL check at runtime:", process.env.DATABASE_URL ? "Exists length: " + process.env.DATABASE_URL.length : "UNDEFINED!!!");
+
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("CRITICAL: DATABASE_URL is missing at runtime!");
+}
+
 let prisma;
 
-// Check if we are in production (or if you prefer checking a specific env variable like process.env.USE_NEON === 'true')
-const useNeonAdapter =  process.env.DATABASE_URL?.includes('neon.tech');
+const isProduction = process.env.NODE_ENV === 'production' || connectionString.includes('neon.tech');
 
-if (useNeonAdapter) {
-  // --- PRODUCTION SETUP (Neon) ---
+if (isProduction) {
   const { PrismaNeon } = await import('@prisma/adapter-neon');
   const { Pool, neonConfig } = await import('@neondatabase/serverless');
 
-  // Required for Neon serverless driver in Node.js
   neonConfig.webSocketConstructor = ws;
 
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  });
-
+  const pool = new Pool({ connectionString });
   const adapter = new PrismaNeon(pool);
   prisma = new PrismaClient({ adapter });
   console.log('🔌 Connected using Neon Adapter (Production)');
 
 } else {
-  // --- LOCAL SETUP (Standard Postgres / pg) ---
   const { PrismaPg } = await import('@prisma/adapter-pg');
   const pkg = await import('pg');
   const { Pool } = pkg;
 
-  const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  });
-
+  const pool = new Pool({ connectionString });
   const adapter = new PrismaPg(pool);
   prisma = new PrismaClient({ adapter });
   console.log('💻 Connected using Standard PG Adapter (Local)');
