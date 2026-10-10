@@ -1,60 +1,53 @@
 import { useEffect } from "react";
-import axiosPrivate from "../api/axios";
-import { useAuth } from "./useAuth";
+import { axiosPrivate } from "../api/axios"; // Your custom axios instance with base URL
 import useRefreshToken from "./useRefreshToken";
+import { useAuth } from "./useAuth";
 
 const useAxiosPrivate = () => {
-    const refresh = useRefreshToken();
-    const { auth } = useAuth();
+  const refresh = useRefreshToken();
+  const { auth } = useAuth();
 
-    useEffect(() => {
-        // 1. Request Interceptor: Attach the access token to the headers
-        const requestIntercept = axiosPrivate.interceptors.request.use(
-            (config) => {
-                // If the Authorization header isn't set yet, inject our token
-                if (!config.headers['Authorization']) {
-                    config.headers['Authorization'] = `Bearer ${auth?.token}`;
-                }
-                return config;
-            }, 
-            (error) => Promise.reject(error)
-        );
+  useEffect(() => {
+    const requestIntercept = axiosPrivate.interceptors.request.use(
+      (config) => {
+        // Attach token if it exists
+        if (!config.headers["Authorization"] && auth?.token) {
+          config.headers["Authorization"] = `Bearer ${auth.token}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-        // 2. Response Interceptor: Handle token expiration (403 or 401 depending on your backend)
-        const responseIntercept = axiosPrivate.interceptors.response.use(
-            (response) => response, // If the request succeeds, just return the response
-            async (error) => {
-                const prevRequest = error?.config;
-                
-                // If the server returns 403 (expired token) and we haven't retried this request yet
-                if ((error?.response?.status === 403 || error?.response?.status === 401) && !prevRequest?.sent) {
-                    prevRequest.sent = true; // Mark request as retried to avoid infinite loops
+    const responseIntercept = axiosPrivate.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const prevRequest = error?.config;
+        
+        // Check if it's a 401 error and we haven't already tried retrying this specific request
+        if (error?.response?.status === 401 && !prevRequest?.sent) {
+          prevRequest.sent = true; // 💡 CRITICAL: Mark this request as retried so it never loops!
 
-                    try {
-                        // Fetch a completely new access token from the backend
-                        const newAccessToken = await refresh();
-                        
-                        // Update the failed request's header with the brand new token
-                        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-                        
-                        // Retry the original request with the new token
-                        return axiosPrivate(prevRequest);
-                    } catch (refreshError) {
-                        return Promise.reject(refreshError);
-                    }
-                }
-                return Promise.reject(error);
-            }
-        );
+          try {
+            const newAccessToken = await refresh();
+            prevRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+            return axiosPrivate(prevRequest); // Retry the original request with the new token
+          } catch (refreshError) {
+            return Promise.reject(refreshError);
+          }
+        }
 
-        // Cleanup interceptors when the component using the hook unmounts
-        return () => {
-            axiosPrivate.interceptors.request.eject(requestIntercept);
-            axiosPrivate.interceptors.response.eject(responseIntercept);
-        };
-    }, [auth, refresh]);
+        return Promise.reject(error);
+      }
+    );
 
-    return axiosPrivate;
+    return () => {
+      axiosPrivate.interceptors.request.eject(requestIntercept);
+      axiosPrivate.interceptors.response.eject(responseIntercept);
+    };
+  }, [auth, refresh]);
+
+  return axiosPrivate;
 };
 
 export default useAxiosPrivate;

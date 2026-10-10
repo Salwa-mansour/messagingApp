@@ -6,7 +6,7 @@ let activeRefreshPromise = null;
 
 const useRefreshToken = () => {
   const { setAuth } = useAuth();
-
+  console.log('trigger refresh')
   const refresh = async () => {
     // 1. If a refresh request is ALREADY in flight, don't start a new one!
     // Just return the promise that is already running.

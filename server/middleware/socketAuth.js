@@ -27,11 +27,11 @@ export const setupSocketAuth = (io) => {
 
     socket.on("join_room", (roomId) => {
       socket.join(roomId);
-      console.log(`User ${socket.id} joined room: ${roomId}`);
+    //  console.log(`User ${socket.id} joined room: ${roomId}`);
     });
     
     socket.on("disconnect", () => {
-      console.log(`User disconnected: ${socket.id}`);
+     console.log(`User disconnected: ${socket.id}`);
     });
   });
 };
