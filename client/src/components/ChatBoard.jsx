@@ -20,6 +20,7 @@ const ChatDashboard = () => {
   const [isLoading, setIsLoading] = useState(true); 
   const [currentRoom, setCurrentRoom] = useState(null);
   const [messages, setMessages] = useState([]); 
+  const [loadingMessages,setLoadingMessages] = useState(true)
   const [pendingDM, setPendingDM] = useState(null);
   const [showChatWindow, setShowChatWindow] = useState(false);
   const messagesEndRef = useRef(null);
@@ -54,7 +55,7 @@ const ChatDashboard = () => {
       try {
         setIsLoading(true); 
         const response = await axiosPrivate.get("/group/user-groups");
-        console.log(response.data)
+       
         if (isMounted) {
           setChatRooms(response.data);
         }
@@ -112,6 +113,7 @@ useEffect(() => {
     let isMounted = true;
 
     const fetchMessageHistory = async () => {
+      setLoadingMessages(true)
       try {
         const response = await axiosPrivate.get(`/message/${currentRoom.id}`);
         if (isMounted) {
@@ -121,6 +123,8 @@ useEffect(() => {
         }
       } catch (err) {
         console.error("Failed to fetch historical database logs:", err);
+      }finally{
+        setLoadingMessages(false)
       }
     };
 
@@ -154,18 +158,23 @@ useEffect(() => {
     );
   }
 
-  const getActiveChatName = () => {
-    if (currentRoom) {
-      if (currentRoom.name) return currentRoom.name;
-      const current = chatRooms.find(r => r.id === currentRoom.id);
-      return current ? current.name : "Active Chat Channel";
-    }
-    if (pendingDM) {
-      return `Direct Message with ${pendingDM.username}`;
-    }
-    return "Select a conversation room";
-  };
+// 💡 One universal helper function for all rooms and DMs
+  const getChatDisplayName = (room) => {
+    if (!room) return "";
 
+    // If it's a Direct Message, find the other participant's name
+    if (room.isDM && room.users) {
+      const currentUserId = auth?.user?.id ;
+      
+      const otherUser = room.users.find((u) => u.id !== currentUserId);
+      if (otherUser) {
+        return otherUser.username;
+      }
+    }
+
+    // Otherwise, return the standard group name
+    return room.name || "Active Chat Channel";
+  };
   return (
     <div className="chat-dashboard">
       {/* Left Side Panel: Chat Rooms */}
@@ -178,7 +187,7 @@ useEffect(() => {
                 className={`chat-room ${currentRoom?.id === room.id ? "active-room" : ""}`} 
                 onClick={() => {setCurrentRoom(room); setShowChatWindow(true); }} 
               >
-                <h3>{room?.name}</h3>
+                <h3>{getChatDisplayName(room)}</h3>
               </li>
             ))
           ) : (
@@ -196,7 +205,7 @@ useEffect(() => {
             >
             <FontAwesomeIcon icon={faArrowLeft} />
             </button>
-          <h2>{getActiveChatName()}</h2>
+          <h2>{getChatDisplayName()}</h2>
          
         </header>
 
@@ -204,13 +213,17 @@ useEffect(() => {
           {(currentRoom || pendingDM) ? (
             messages.length > 0 ? (
               messages.map((msg) => (
-                <div key={msg.id || Math.random()} className={`message ${msg.senderId === auth?.user?.id ? "sent" : "received"}`}>  
+               
+                <div key={msg.id || Math.random()} className={`message ${msg.senderId == auth?.user?.id ? "sent" : "received"}`}>  
+               {console.log(msg.senderId,auth?.user?.id,msg.senderId == auth?.user?.id)}
                   <p>
                     <strong className="owner">{msg.sender?.username || msg.senderId || "User"}:</strong> {msg.content}
                   </p>
                 </div>
               ))
-            ) : (
+            ) :
+            loadingMessages ? <p>loading messages ...</p>
+             :(
               <p>No messages in this room yet. Send a message to start conversing!</p>
             )
           ) : (

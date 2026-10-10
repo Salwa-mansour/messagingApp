@@ -64,7 +64,7 @@ export const findOrCreateDMGroup = async (userAId, userB) => {
   // 2. If not found, create a brand new DM group and link both users simultaneously
   return await prisma.group.create({
     data: {
-      name:userB.username, 
+      name:userB.username, // not correct the group name is going to differ accourding to the user 
       isDM: true,
       users: {
         connect: [

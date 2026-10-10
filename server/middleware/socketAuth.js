@@ -23,7 +23,7 @@ export const setupSocketAuth = (io) => {
   // 💡 2. Register connection listeners right here once authenticated
   io.on("connection", (socket) => {
     // Make sure your JWT token actually includes a 'username' field, otherwise fallback to id
-    console.log(`Authenticated user connected: ${socket.user?.username || socket.id}`);
+   // console.log(`Authenticated user connected: ${socket.user?.username || socket.id}`);
 
     socket.on("join_room", (roomId) => {
       socket.join(roomId);

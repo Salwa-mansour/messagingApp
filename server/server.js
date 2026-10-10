@@ -51,7 +51,7 @@ app.set('io', io);
 
 // Socket Event Receivers
 io.on("connection", (socket) => {
-    console.log("A user connected: " + socket.id);
+  //  console.log("A user connected: " + socket.id);
     
     socket.on("join_room", (roomId) => {
         socket.join(roomId);
