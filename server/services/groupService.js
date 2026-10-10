@@ -58,13 +58,17 @@ export const findOrCreateDMGroup = async (userAId, userB) => {
   const existingGroup = await findDMGroup(userAId, userB.id);
 
   if (existingGroup) {
-    return existingGroup; // Found it! Return the existing group context
+    // Found it! Safely return the existing group with your flag attached
+    return {
+      ...existingGroup,
+      isExists: true
+    };
   }
 
-  // 2. If not found, create a brand new DM group and link both users simultaneously
-  return await prisma.group.create({
+  // 2. If not found, create a brand new DM group
+  const newGroup = await prisma.group.create({
     data: {
-      name:userB.username, // not correct the group name is going to differ accourding to the user 
+      name: "Direct Message", // Neutral placeholder (frontend handles display name dynamically)
       isDM: true,
       users: {
         connect: [
@@ -74,6 +78,12 @@ export const findOrCreateDMGroup = async (userAId, userB) => {
       }
     }
   });
+
+  // Return the newly created group with the flag set to false
+  return {
+    ...newGroup,
+    isExists: false
+  };
 };
 export const getUserGroups = async (userId) => {
   if (!userId) return [];

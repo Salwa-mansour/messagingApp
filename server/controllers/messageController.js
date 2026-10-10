@@ -17,7 +17,7 @@ export const getGroupMessages = async (req, res) => {
 
 
 export const sendMessage = async (req, res) => {
-  const { targetId } = req.params; // 💡 Now reads cleanly from the URL path directly
+  const { targetId } = req.params; 
   const { content } = req.body;
   const senderId = req.user.userId;
 
@@ -27,6 +27,8 @@ export const sendMessage = async (req, res) => {
 
   try {
     let targetGroupId = null;
+    let isNewDM = false;
+    let dmGroupData = null;
 
     // Check if the targetId belongs to an existing group
     const existingGroup = await groupService.getGroupById(targetId);
@@ -47,17 +49,26 @@ export const sendMessage = async (req, res) => {
       }
 
       // Run your Find-or-Create direct conversation sequence
-      const dmGroup = await groupService.findOrCreateDMGroup(senderId, recipientUser);
-      targetGroupId = dmGroup.id;
+      const dmResult = await groupService.findOrCreateDMGroup(senderId, recipientUser);
+      targetGroupId = dmResult.id;
+      isNewDM = !dmResult.isExists; // Track if it was newly created
+      dmGroupData = dmResult;
     }
 
     // Save the message
     const newMessage = await messageService.createMessage(content, senderId, targetGroupId);
-    //  Grab the WebSocket server instance
+    
+    // Grab the WebSocket server instance
     const io = req.app.get("io");
 
-    //  Real-time Broadcast: Push to everyone listening in this specific chat channel room
     if (io) {
+      // 1. If this was a brand new DM, notify both users so it appears in their sidebars
+      if (isNewDM && dmGroupData) {
+        io.to(senderId).emit("group_created", dmGroupData);
+        io.to(targetId).emit("group_created", dmGroupData);
+      }
+
+      // 2. Real-time Broadcast: Push message to everyone listening in this specific chat channel room
       io.to(targetGroupId).emit("receive_message", newMessage);
     }
 

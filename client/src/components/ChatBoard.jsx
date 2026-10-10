@@ -140,6 +140,13 @@ useEffect(() => {
        setMessages((prev) => [...prev, incomingMsg]);
         }
       });
+        socket.on("group_created", (newGroup) => {
+            setChatRooms((prevRooms) => {
+              // Prevent duplicates if already in the list
+              if (prevRooms.some((room) => room.id === newGroup.id)) return prevRooms;
+              return [...prevRooms, newGroup];
+            });
+          });
     }
 
     return () => { 
