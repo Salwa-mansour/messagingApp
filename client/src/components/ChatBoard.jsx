@@ -54,6 +54,7 @@ const ChatDashboard = () => {
       try {
         setIsLoading(true); 
         const response = await axiosPrivate.get("/group/user-groups");
+        console.log(response.data)
         if (isMounted) {
           setChatRooms(response.data);
         }
@@ -109,7 +110,7 @@ useEffect(() => {
   useEffect(() => {
     if (!currentRoom?.id) return;
     let isMounted = true;
-console.log(currentRoom)
+
     const fetchMessageHistory = async () => {
       try {
         const response = await axiosPrivate.get(`/message/${currentRoom.id}`);

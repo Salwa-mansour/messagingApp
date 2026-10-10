@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet,useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import useRefreshToken from "../hooks/useRefreshToken"; 
 import { useAuth } from "../hooks/useAuth";
@@ -9,6 +9,7 @@ const PersistLogin = () => {
   const refresh = useRefreshToken();
   const { auth } = useAuth();
   const [persist] = useToggle("persist", false);
+  const navigate = useNavigate();
   
   // 💡 CIRCUIT BREAKER: Prevents React from executing the effect block 
   // more than once per mount cycle, even if state or context updates.
@@ -21,7 +22,8 @@ const PersistLogin = () => {
       try {
         await refresh();
       } catch (err) {
-        console.log("No valid refresh session found (User is a guest).");
+        console.log('refresh failed')
+         navigate('/login');
       } finally {
         if (isMounted) setIsLoading(false);
       }
